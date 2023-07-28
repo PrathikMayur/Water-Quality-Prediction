@@ -1,0 +1,146 @@
+*------------------------------------------------------------*
+ Node = 10
+*------------------------------------------------------------*
+if ph >= 7.19334
+AND Turbidity < 3.15462
+AND Sulfate < 286.444
+then 
+ Tree Node Identifier   = 10
+ Number of Observations = 16
+ Predicted: Potability=1 = 0.44
+ Predicted: Potability=0 = 0.56
+ 
+*------------------------------------------------------------*
+ Node = 11
+*------------------------------------------------------------*
+if ph >= 7.19334
+AND Turbidity >= 3.15462 or MISSING
+AND Sulfate < 286.444
+then 
+ Tree Node Identifier   = 11
+ Number of Observations = 74
+ Predicted: Potability=1 = 0.88
+ Predicted: Potability=0 = 0.12
+ 
+*------------------------------------------------------------*
+ Node = 12
+*------------------------------------------------------------*
+if Sulfate < 363.467 AND Sulfate >= 286.444 or MISSING
+AND Hardness < 101.118
+then 
+ Tree Node Identifier   = 12
+ Number of Observations = 7
+ Predicted: Potability=1 = 1.00
+ Predicted: Potability=0 = 0.00
+ 
+*------------------------------------------------------------*
+ Node = 13
+*------------------------------------------------------------*
+if Sulfate < 363.467 AND Sulfate >= 286.444 or MISSING
+AND Hardness >= 101.118 or MISSING
+then 
+ Tree Node Identifier   = 13
+ Number of Observations = 1915
+ Predicted: Potability=1 = 0.35
+ Predicted: Potability=0 = 0.65
+ 
+*------------------------------------------------------------*
+ Node = 14
+*------------------------------------------------------------*
+if ph < 7.79417 or MISSING
+AND Sulfate >= 363.467
+then 
+ Tree Node Identifier   = 14
+ Number of Observations = 342
+ Predicted: Potability=1 = 0.56
+ Predicted: Potability=0 = 0.44
+ 
+*------------------------------------------------------------*
+ Node = 16
+*------------------------------------------------------------*
+if ph < 7.19334 or MISSING
+AND Sulfate < 286.444
+AND Solids < 19398.8
+AND Organic_carbon < 10.7149
+then 
+ Tree Node Identifier   = 16
+ Number of Observations = 7
+ Predicted: Potability=1 = 0.57
+ Predicted: Potability=0 = 0.43
+ 
+*------------------------------------------------------------*
+ Node = 17
+*------------------------------------------------------------*
+if ph < 7.19334 or MISSING
+AND Sulfate < 286.444
+AND Solids < 19398.8
+AND Organic_carbon >= 10.7149 or MISSING
+then 
+ Tree Node Identifier   = 17
+ Number of Observations = 46
+ Predicted: Potability=1 = 0.11
+ Predicted: Potability=0 = 0.89
+ 
+*------------------------------------------------------------*
+ Node = 19
+*------------------------------------------------------------*
+if ph < 7.19334 or MISSING
+AND Sulfate < 286.444
+AND Solids >= 19398.8 or MISSING
+AND Hardness >= 193.974 or MISSING
+then 
+ Tree Node Identifier   = 19
+ Number of Observations = 55
+ Predicted: Potability=1 = 0.40
+ Predicted: Potability=0 = 0.60
+ 
+*------------------------------------------------------------*
+ Node = 22
+*------------------------------------------------------------*
+if ph >= 7.79417
+AND Sulfate >= 363.467
+AND Chloramines < 9.43086 or MISSING
+then 
+ Tree Node Identifier   = 22
+ Number of Observations = 109
+ Predicted: Potability=1 = 0.17
+ Predicted: Potability=0 = 0.83
+ 
+*------------------------------------------------------------*
+ Node = 23
+*------------------------------------------------------------*
+if ph >= 7.79417
+AND Sulfate >= 363.467
+AND Chloramines >= 9.43086
+then 
+ Tree Node Identifier   = 23
+ Number of Observations = 7
+ Predicted: Potability=1 = 0.86
+ Predicted: Potability=0 = 0.14
+ 
+*------------------------------------------------------------*
+ Node = 24
+*------------------------------------------------------------*
+if ph < 5.40698
+AND Sulfate < 286.444
+AND Solids >= 19398.8 or MISSING
+AND Hardness < 193.974
+then 
+ Tree Node Identifier   = 24
+ Number of Observations = 6
+ Predicted: Potability=1 = 0.17
+ Predicted: Potability=0 = 0.83
+ 
+*------------------------------------------------------------*
+ Node = 25
+*------------------------------------------------------------*
+if ph < 7.19334 AND ph >= 5.40698 or MISSING
+AND Sulfate < 286.444
+AND Solids >= 19398.8 or MISSING
+AND Hardness < 193.974
+then 
+ Tree Node Identifier   = 25
+ Number of Observations = 35
+ Predicted: Potability=1 = 0.86
+ Predicted: Potability=0 = 0.14
+ 

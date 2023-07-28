@@ -1,0 +1,979 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                December 03, 2022
+Time:                02:50:58
+*------------------------------------------------------------*
+17174  %let EMEXCEPTIONSTRING=;
+17175  *------------------------------------------------------------*;
+17176  * SCORE: Tree;
+17177  *------------------------------------------------------------*;
+17178  %let EM_ACTION = SCORE;
+17179  %let syscc = 0;
+17180  %macro main;
+17181  
+17182    %if %upcase(&EM_ACTION) = CREATE %then %do;
+17183      filename temp catalog 'sashelp.emmodl.tree_create.source';
+17184      %include temp;
+17185      filename temp;
+17186  
+17187      %em_tree_create;
+17188    %end;
+17189  
+17190     %else
+17191     %if %upcase(&EM_ACTION) = TRAIN %then %do;
+17192  
+17193         filename temp catalog 'sashelp.emmodl.tree_train.source';
+17194         %include temp;
+17195         filename temp;
+17196         %em_tree_train;
+17197     %end;
+17198  
+17199    %else
+17200    %if %upcase(&EM_ACTION) = SCORE %then %do;
+17201      filename temp catalog 'sashelp.emmodl.tree_score.source';
+17202      %include temp;
+17203      filename temp;
+17204  
+17205      %em_tree_score;
+17206  
+17207    %end;
+17208  
+17209    %else
+17210    %if %upcase(&EM_ACTION) = REPORT %then %do;
+17211  
+17212         filename temp catalog 'sashelp.emmodl.tree_report.source';
+17213         %include temp;
+17214         filename temp;
+17215  
+17216         %em_tree_report;
+17217     %end;
+17218  
+17219    %else
+17220    %if %upcase(&EM_ACTION) = OPENINT %then %do;
+17221  
+17222         filename temp catalog 'sashelp.emmodl.tree_actions.source';
+17223         %include temp;
+17224         filename temp;
+17225         %EM_TREE_OPENTREEVIEWER;
+17226  
+17227     %end;
+17228  
+17229    %else
+17230    %if %upcase(&EM_ACTION) = CLOSEINT %then %do;
+17231  
+17232         filename temp catalog 'sashelp.emmodl.tree_actions.source';
+17233         %include temp;
+17234         filename temp;
+17235         %EM_TREE_CLOSETREEVIEWER;
+17236  
+17237     %end;
+17238  
+17239  
+17240     %doendm:
+17241  %mend main;
+17242  
+17243  %main;
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMMODL.TREE_SCORE.SOURCE.
+17245 +%macro em_tree_score;
+17247 +   /* determine if multiple targets will be processed */
+17248 +   %let em_tree_multipleTargets=N;
+17249 +   %let em_tree_numTarget=1;
+17250 +   %if "&EM_PROPERTY_USEMULTIPLETARGET" eq "Y" %then %do;
+17251 +      /* determine if there are any ordinal target variables - if so, multiple targets are not supported */
+17252 +      %if &EM_NUM_ORDINAL_TARGET gt 0 %then %do;
+17253 +         %let em_tree_multipleTargets=N;
+17254 +      %end;
+17255 +      %else %do;
+17256 +         /* create macro array of targets  */
+17257 +         data _null_;
+17258 +           set &EM_DATA_VARIABLESET(where=(ROLE='TARGET' AND LEVEL^='ORDINAL')) end=eof;
+17259 +           call symput('em_tree_targetVars'!!strip(put(_N_, BEST.)), strip(Name));
+17260 +           if eof then
+17261 +             call symput('em_tree_numTarget', strip(put(_N_, BEST.)));
+17262 +        run;
+17264 +        %if &em_tree_numTarget gt 1 %then %do;
+17265 +           %let em_tree_multipleTargets=Y;
+17266 +        %end;
+17267 +      %end;
+17268 +   %end;
+17270 +   /* build flow and publish scoring code */
+17271 +   %EM_GETNAME(key=TREEFLOW, type=FILE, extension=sas);
+17272 +   %EM_GETNAME(key=TREEPUBLISH, type=FILE, extension=sas);
+17274 +   filename treeflow "&EM_USER_TREEFLOW";
+17275 +   filename treepub "&EM_USER_TREEPUBLISH";
+17277 +   filename flowref  "&EM_FILE_EMFLOWSCORECODE";
+17278 +   filename pubref   "&EM_FILE_EMPUBLISHSCORECODE";
+17280 +   %em_copyfile(infref=treeflow, outfref=flowref);
+17281 +   %em_copyfile(infref=treepub, outfref=pubref);
+17283 +   filename treeflow;
+17284 +   filename treepub;
+17286 +   /* if priors are used, add code to generate unadjusted residuals in export */
+17287 +   %let useAdjPriors = N;
+17288 +   data _null_;
+17289 +     set &EM_DEC_DECMETA(where=(_TYPE_="DECPRIOR"));
+17290 +     if USE="Y" then call symput('useAdjPriors', 'Y');
+17291 +   run;
+17292 +   %if (("&em_tree_multipleTargets" eq "N") AND ("&useAdjPriors" eq "Y")) %then %do;
+17293 +      filename temp catalog 'sashelp.emutil.em_makeunadjustedresidualvars.source';
+17294 +      %include temp;
+17295 +      filename temp;
+17297 +      %EM_GETNAME(key=adjResidualCode, type=FILE, extension=sas);
+17298 +      filename adjref "&EM_USER_adjResidualCode";
+17299 +      %makeUnadjustedResidualVars(target=%EM_TARGET, decmeta=&EM_DEC_DECMETA, fref=adjref);
+17301 +      %em_copyfile(infref=adjref, outfref=flowref, append=Y);
+17303 +      filename adjref;
+17304 +   %end;
+17306 +   /* LEAF */
+17307 +   %if "&EM_PROPERTY_LEAFID" eq "Y" %then %do;
+17308 +      data _null_;
+17309 +        file flowref mod;
+17310 +        put 'drop _LEAF_;';
+17311 +      run;
+17313 +      data _null_;
+17314 +        file pubref mod;
+17315 +        put 'drop _LEAF_;';
+17316 +      run;
+17318 +   %end;
+17320 +   filename flowref;
+17321 +   filename pubref;
+17323 +   /* em_metachange code */
+17324 +   %if "&EM_PROPERTY_LEAFID" eq "Y" %then %do;
+17325 +     %EM_METACHANGE(name=_NODE_, role=&EM_PROPERTY_NODEROLE, LEVEL=NOMINAL);
+17326 +   %end;
+17328 +   /* variable selection based on importance stat    */
+17329 +   %if "&EM_PROPERTY_VARSELECTION" eq "Y" %then %do;
+17330 +     %EM_GETNAME(key=OUTIMPORT, type=DATA);
+17331 +     %let dsid = %sysfunc(open(&EM_USER_OUTIMPORT(where=(IMPORTANCE<0.05))));
+17332 +     %let varnum = %sysfunc(varnum(&dsid, NAME));
+17333 +     %let obs = %sysfunc(fetch(&dsid));
+17334 +     %do %while(&obs=0);
+17335 +       %let temp = %nrbquote(%sysfunc(getvarc(&dsid, &varnum)));
+17336 +       %let varname = %nrbquote(%sysfunc(tranwrd(&temp,  %str(%"),"")));
+17337 +       %EM_METACHANGE(name=&varname, role=REJECTED);
+17338 +       %let obs = %sysfunc(fetch(&dsid));
+17339 +     %end;
+17340 +     %if &dsid %then %let dsid=%sysfunc(close(&dsid));
+17341 +   %end;
+17343 +   /* set Q_ varaibles to role of ASSESS when in the presense of prior probabilities */
+17344 +   %if %sysfunc(exist(&EM_DEC_DECMETA)) %then %do;
+17345 +    %let tree_pred_vars = ;
+17346 +    %let tree_pred_lvl =;
+17347 +    %let numpred= 0;
+17349 +    data _null_;
+17350 +     set &EM_DEC_DECMETA(where=(_TYPE_="PREDICTED")) end=eof;
+17351 +     call symput('tree_pred_vars'!!strip(put(_N_, BEST.)), strip(VARIABLE));
+17352 +     call symput('tree_pred_lvl'!!strip(put(_N_, BEST.)), strip(LEVEL));
+17353 +     if eof then
+17354 +       call symput('numpred', strip(put(_N_, BEST.)));
+17355 +    run;
+17356 +   %end;
+17358 +   %if &numpred ne 0 %then %do;
+17359 +    %do i=1 %to &numpred;
+17360 +      %let qpred = Q%substr(&&tree_pred_vars&i,2);
+17361 +      %EM_METACHANGE(name=&qpred, role=ASSESS);
+17362 +    %end;
+17363 +   %end;
+17365 +   /* determine if multiple targets will be processed */
+17366 +   %let em_tree_multipleTargets=N;
+17367 +   %let em_tree_numTarget=1;
+17368 +   %if "&EM_PROPERTY_USEMULTIPLETARGET" eq "Y" %then %do;
+17369 +      /* determine if there are any ordinal target variables - if so, multiple targets are not supported */
+17370 +      %if &EM_NUM_ORDINAL_TARGET gt 0 %then %do;
+17371 +         %let em_tree_multipleTargets=N;
+17372 +      %end;
+17373 +      %else %do;
+17374 +        data _null_;
+17375 +          set &EM_DATA_VARIABLESET(where=(ROLE='TARGET' AND LEVEL^='ORDINAL')) end=eof;
+17376 +          if eof then
+17377 +            call symput('em_tree_numTarget', strip(put(_N_, BEST.)));
+17378 +        run;
+17380 +        %if &em_tree_numTarget gt 1 %then %do;
+17381 +           %let em_tree_multipleTargets=Y;
+17382 +        %end;
+17383 +     %end;
+17384 +   %end;
+17386 +   /* need to include this code to do the %em_report for OUTIMPORT here instead of in Report code so _loop data set is created when group processing */
+17387 +   %if "&em_tree_multipleTargets" eq "N" %then %do;
+17389 +      /* variable importance */
+17390 +      %EM_GETNAME(key=OUTIMPORT, type=DATA);
+17391 +      %if %sysfunc(exist(&EM_USER_OUTIMPORT)) eq 1 %then %do;
+17393 +         %let validexist=0;
+17394 +         %if (("&EM_IMPORT_VALIDATE" ne "") AND (%sysfunc(exist(&EM_IMPORT_VALIDATE)) or %sysfunc(exist(&EM_IMPORT_VALIDATE,VIEW)))) %then %do;
+17395 +           %let validexist=1;
+17396 +         %end;
+17398 +         /* determine if vars exists - properties could indicate they are they but freeze=Y would mean the node wasn't retrained */
+17399 +         /* and the columns may not be generated                                                                                 */
+17400 +         %let em_tree_cvexists=;
+17401 +         %let em_tree_surrexists=.;
+17402 +         data _null_;
+17403 +            set &EM_USER_OUTIMPORT (obs=2) end=eof;
+17404 +            if eof then do ;
+17405 +               call symput("em_tree_cvexists" , strip(put(cvimportance,best.))) ;
+17406 +               call symput("em_tree_surrexists", strip(put(nsurrogates, best.)));
+17407 +            end;
+17408 +         run;
+17410 +         data &EM_USER_OUTIMPORT;
+17411 +            set &EM_USER_OUTIMPORT;
+17413 +            /* format columns based on Precison value specified */
+17414 +            format importance 15.&EM_PROPERTY_PRECISION
+17415 +                 %if &validexist %then %do;
+17416 +                   vimportance ratio 15.&EM_PROPERTY_PRECISION
+17417 +                 %end;
+17418 +                 %if "&EM_TREE_CVEXISTS" ne "." %then %do;
+17419 +                   cvimportance vimportance ratio 15.&EM_PROPERTY_PRECISION
+17420 +                 %end;
+17421 +            ;
+17422 +            label  NAME       = "%sysfunc(sasmsg(sashelp.dmine, meta_name_vlabel, noquote))"
+17423 +                 LABEL        = "%sysfunc(sasmsg(sashelp.dmine, meta_label_vlabel, noquote))"
+17424 +                 NRULES       = "%sysfunc(sasmsg(sashelp.dmine, rpt_nrules_vlabel, noquote))"
+17425 +                 IMPORTANCE   = "%sysfunc(sasmsg(sashelp.dmine, rpt_importance_vlabel, noquote))"
+17426 +                 %if "&em_tree_surrexists" ne "" %then %do;
+17427 +                   NSURROGATES  = "%sysfunc(sasmsg(sashelp.dmine, rpt_nsurrogates_vlabel, noquote))"
+17428 +                 %end;
+17429 +                 %if &validexist %then %do;
+17430 +                   VIMPORTANCE = "%sysfunc(sasmsg(sashelp.dmine, rpt_vimportance_vlabel, noquote))"
+17431 +                   RATIO       = "%sysfunc(sasmsg(sashelp.dmine, rpt_ratio_vlabel, noquote))"
+17432 +                 %end;
+17433 +                 %if "&EM_TREE_CVEXISTS" ne "" %then %do;
+17434 +                   VIMPORTANCE = "%sysfunc(sasmsg(sashelp.dmine, rpt_vimportance_vlabel, noquote))"
+17435 +                   CVIMPORTANCE =  "%sysfunc(sasmsg(sashelp.dmine, rpt_cvimport_vlabel, noquote))"
+17436 +                   CVRULES= "%sysfunc(sasmsg(sashelp.dmine, rpt_cvrules_vlabel, noquote))"
+17437 +                   RATIO = "%sysfunc(sasmsg(sashelp.dmine, rpt_ratio_vlabel, noquote))"
+17438 +                 %end;
+17439 +            ;
+17440 +         run;
+17442 +         %EM_REPORT(key=OUTIMPORT, viewtype=DATA, block=MODEL, description=IMPORTANCE, autodisplay=N);
+17443 +      %end;
+17444 +   %end;
+17446 +   %doendm:
+17447 +%mend em_tree_score;
+NOTE: %INCLUDE (level 1) ending.
+NOTE: Fileref TEMP has been deassigned.
+
+NOTE: The file FLOWREF is:
+      Filename=C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\EMFLOWSCORE.sas,
+      RECFM=V,LRECL=20000,File Size (bytes)=0,
+      Last Modified=03Dec2022:02:50:57,
+      Create Time=03Dec2022:02:50:57
+
+NOTE: 204 records were written to the file FLOWREF.
+      The minimum record length was 1.
+      The maximum record length was 65.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: The file PUBREF is:
+      Filename=C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\EMPUBLISHSCORE.sas,
+      RECFM=V,LRECL=20000,File Size (bytes)=0,
+      Last Modified=03Dec2022:02:50:57,
+      Create Time=03Dec2022:02:50:57
+
+NOTE: 182 records were written to the file PUBREF.
+      The minimum record length was 1.
+      The maximum record length was 65.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: Fileref TREEFLOW has been deassigned.
+NOTE: Fileref TREEPUB has been deassigned.
+
+NOTE: There were 1 observations read from the data set EMWS1.TREE_POTABILITY_DM.
+      WHERE _TYPE_='DECPRIOR';
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: The file FLOWREF is:
+      Filename=C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\EMFLOWSCORE.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=7450,
+      Last Modified=03Dec2022:02:50:57,
+      Create Time=03Dec2022:02:50:57
+
+NOTE: 1 record was written to the file FLOWREF.
+      The minimum record length was 12.
+      The maximum record length was 12.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: The file PUBREF is:
+      Filename=C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\EMPUBLISHSCORE.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=6755,
+      Last Modified=03Dec2022:02:50:57,
+      Create Time=03Dec2022:02:50:57
+
+NOTE: 1 record was written to the file PUBREF.
+      The minimum record length was 12.
+      The maximum record length was 12.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Fileref FLOWREF has been deassigned.
+NOTE: Fileref PUBREF has been deassigned.
+
+NOTE: The data set WORK.EM_METACHANGE has 1 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 1 observations read from the data set WORK.EM_METACHANGE.
+NOTE: The data set WORK.EM_METACHANGE has 2 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 2 observations read from the data set WORK.EM_METACHANGE.
+NOTE: The data set WORK.EM_METACHANGE has 3 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 2 observations read from the data set EMWS1.TREE_POTABILITY_DM.
+      WHERE _TYPE_='PREDICTED';
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 3 observations read from the data set WORK.EM_METACHANGE.
+NOTE: The data set WORK.EM_METACHANGE has 4 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 4 observations read from the data set WORK.EM_METACHANGE.
+NOTE: The data set WORK.EM_METACHANGE has 5 observations and 9 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Variable cvimportance is uninitialized.
+NOTE: Variable nsurrogates is uninitialized.
+NOTE: There were 2 observations read from the data set EMWS1.TREE_OUTIMPORT.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Variable NSURROGATES is uninitialized.
+NOTE: Variable VIMPORTANCE is uninitialized.
+NOTE: Variable CVIMPORTANCE is uninitialized.
+NOTE: Variable CVRULES is uninitialized.
+NOTE: Variable RATIO is uninitialized.
+NOTE: There were 9 observations read from the data set EMWS1.TREE_OUTIMPORT.
+NOTE: The data set EMWS1.TREE_OUTIMPORT has 9 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+
+
+NOTE: The data set WORK.EM_USER_REPORT has 132 observations and 4 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+17448  
+17449  *------------------------------------------------------------*;
+17450  * End SCORE: Tree;
+17451  *------------------------------------------------------------*;
+
+17452  proc sort data=WORK.EM_METACHANGE;
+17453  by key uname;
+17454  run;
+
+NOTE: There were 5 observations read from the data set WORK.EM_METACHANGE.
+NOTE: The data set WORK.EM_METACHANGE has 5 observations and 9 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+17455  filename x "C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\CDELTA_TRAIN.sas";
+17456  data _null_;
+17457  file x;
+17458  put 'if upcase(NAME) = "CONDUCTIVITY" then do;';
+17459  put 'ROLE = "REJECTED";';
+17460  put 'end;';
+17461  put 'else ';
+17462  put 'if upcase(NAME) = "Q_POTABILITY0" then do;';
+17463  put 'ROLE = "ASSESS";';
+17464  put 'end;';
+17465  put 'else ';
+17466  put 'if upcase(NAME) = "Q_POTABILITY1" then do;';
+17467  put 'ROLE = "ASSESS";';
+17468  put 'end;';
+17469  put 'else ';
+17470  put 'if upcase(NAME) = "TRIHALOMETHANES" then do;';
+17471  put 'ROLE = "REJECTED";';
+17472  put 'end;';
+17473  put 'else ';
+17474  put 'if upcase(NAME) = "_NODE_" then do;';
+17475  put 'ROLE = "SEGMENT";';
+17476  put 'LEVEL = "NOMINAL";';
+17477  put 'end;';
+17478  run;
+
+NOTE: The file X is:
+      Filename=C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\CDELTA_TRAIN.sas,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=03Dec2022:02:50:57,
+      Create Time=03Dec2022:02:49:58
+
+NOTE: 20 records were written to the file X.
+      The minimum record length was 4.
+      The maximum record length was 44.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+17479  filename x;
+NOTE: Fileref X has been deassigned.
+
+17480  filename emflow "C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\EMFLOWSCORE.sas";
+17481  *------------------------------------------------------------*;
+17482  * Tree: Scoring DATA data;
+17483  *------------------------------------------------------------*;
+17484  data EMWS1.Tree_TRAIN
+17485  / view=EMWS1.Tree_TRAIN
+17486  ;
+17487  set EMWS1.Stat_TRAIN
+17488  ;
+17489  %inc emflow;
+NOTE: %INCLUDE (level 1) file EMFLOW is file C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\EMFLOWSCORE.sas.
+17490 +****************************************************************;
+17491 +******             DECISION TREE SCORING CODE             ******;
+17492 +****************************************************************;
+17493 +
+17494 +******         LENGTHS OF NEW CHARACTER VARIABLES         ******;
+17495 +LENGTH F_Potability  $   12;
+17496 +LENGTH I_Potability  $   12;
+17497 +LENGTH _WARN_  $    4;
+17498 +
+17499 +******              LABELS FOR NEW VARIABLES              ******;
+17500 +label _NODE_ = 'Node' ;
+17501 +label _LEAF_ = 'Leaf' ;
+17502 +label P_Potability0 = 'Predicted: Potability=0' ;
+17503 +label P_Potability1 = 'Predicted: Potability=1' ;
+17504 +label Q_Potability0 = 'Unadjusted P: Potability=0' ;
+17505 +label Q_Potability1 = 'Unadjusted P: Potability=1' ;
+17506 +label R_Potability0 = 'Residual: Potability=0' ;
+17507 +label R_Potability1 = 'Residual: Potability=1' ;
+17508 +label F_Potability = 'From: Potability' ;
+17509 +label I_Potability = 'Into: Potability' ;
+17510 +label U_Potability = 'Unnormalized Into: Potability' ;
+17511 +label _WARN_ = 'Warnings' ;
+17512 +
+17513 +
+17514 +******      TEMPORARY VARIABLES FOR FORMATTED VALUES      ******;
+17515 +LENGTH _ARBFMT_12 $     12; DROP _ARBFMT_12;
+17516 +_ARBFMT_12 = ' '; /* Initialize to avoid warning. */
+17517 +
+17518 +
+17519 +_ARBFMT_12 = PUT( Potability , BEST12.);
+17520 + %DMNORMCP( _ARBFMT_12, F_Potability );
+17521 +
+17522 +******             ASSIGN OBSERVATION TO NODE             ******;
+17523 +IF  NOT MISSING(Sulfate ) AND
+17524 +  Sulfate  <     286.444334038812 THEN DO;
+17525 +  IF  NOT MISSING(ph ) AND
+17526 +        7.19333774685046 <= ph  THEN DO;
+17527 +    IF  NOT MISSING(Turbidity ) AND
+17528 +      Turbidity  <     3.15461617527314 THEN DO;
+17529 +      _NODE_  =                   10;
+17530 +      _LEAF_  =                    6;
+17531 +      P_Potability0  =               0.5625;
+17532 +      P_Potability1  =               0.4375;
+17533 +      Q_Potability0  =               0.5625;
+17534 +      Q_Potability1  =               0.4375;
+17535 +      I_Potability  = '0' ;
+17536 +      U_Potability  =                    0;
+17537 +      END;
+17538 +    ELSE DO;
+17539 +      _NODE_  =                   11;
+17540 +      _LEAF_  =                    7;
+17541 +      P_Potability0  =     0.12162162162162;
+17542 +      P_Potability1  =     0.87837837837837;
+17543 +      Q_Potability0  =     0.12162162162162;
+17544 +      Q_Potability1  =     0.87837837837837;
+17545 +      I_Potability  = '1' ;
+17546 +      U_Potability  =                    1;
+17547 +      END;
+17548 +    END;
+17549 +  ELSE DO;
+17550 +    IF  NOT MISSING(Solids ) AND
+17551 +      Solids  <     19398.8450390458 THEN DO;
+17552 +      IF  NOT MISSING(Organic_carbon ) AND
+17553 +        Organic_carbon  <     10.7148897100055 THEN DO;
+17554 +        _NODE_  =                   16;
+17555 +        _LEAF_  =                    1;
+17556 +        P_Potability0  =     0.42857142857142;
+17557 +        P_Potability1  =     0.57142857142857;
+17558 +        Q_Potability0  =     0.42857142857142;
+17559 +        Q_Potability1  =     0.57142857142857;
+17560 +        I_Potability  = '1' ;
+17561 +        U_Potability  =                    1;
+17562 +        END;
+17563 +      ELSE DO;
+17564 +        _NODE_  =                   17;
+17565 +        _LEAF_  =                    2;
+17566 +        P_Potability0  =     0.89130434782608;
+17567 +        P_Potability1  =     0.10869565217391;
+17568 +        Q_Potability0  =     0.89130434782608;
+17569 +        Q_Potability1  =     0.10869565217391;
+17570 +        I_Potability  = '0' ;
+17571 +        U_Potability  =                    0;
+17572 +        END;
+17573 +      END;
+17574 +    ELSE DO;
+17575 +      IF  NOT MISSING(Hardness ) AND
+17576 +        Hardness  <     193.974365294055 THEN DO;
+17577 +        IF  NOT MISSING(ph ) AND
+17578 +          ph  <     5.40697519851934 THEN DO;
+17579 +          _NODE_  =                   24;
+17580 +          _LEAF_  =                    3;
+17581 +          P_Potability0  =     0.83333333333333;
+17582 +          P_Potability1  =     0.16666666666666;
+17583 +          Q_Potability0  =     0.83333333333333;
+17584 +          Q_Potability1  =     0.16666666666666;
+17585 +          I_Potability  = '0' ;
+17586 +          U_Potability  =                    0;
+17587 +          END;
+17588 +        ELSE DO;
+17589 +          _NODE_  =                   25;
+17590 +          _LEAF_  =                    4;
+17591 +          P_Potability0  =     0.14285714285714;
+17592 +          P_Potability1  =     0.85714285714285;
+17593 +          Q_Potability0  =     0.14285714285714;
+17594 +          Q_Potability1  =     0.85714285714285;
+17595 +          I_Potability  = '1' ;
+17596 +          U_Potability  =                    1;
+17597 +          END;
+17598 +        END;
+17599 +      ELSE DO;
+17600 +        _NODE_  =                   19;
+17601 +        _LEAF_  =                    5;
+17602 +        P_Potability0  =                  0.6;
+17603 +        P_Potability1  =                  0.4;
+17604 +        Q_Potability0  =                  0.6;
+17605 +        Q_Potability1  =                  0.4;
+17606 +        I_Potability  = '0' ;
+17607 +        U_Potability  =                    0;
+17608 +        END;
+17609 +      END;
+17610 +    END;
+17611 +  END;
+17612 +ELSE DO;
+17613 +  IF  NOT MISSING(Sulfate ) AND
+17614 +         363.46745680074 <= Sulfate  THEN DO;
+17615 +    IF  NOT MISSING(ph ) AND
+17616 +          7.79417057963898 <= ph  THEN DO;
+17617 +      IF  NOT MISSING(Chloramines ) AND
+17618 +            9.43085791478326 <= Chloramines  THEN DO;
+17619 +        _NODE_  =                   23;
+17620 +        _LEAF_  =                   12;
+17621 +        P_Potability0  =     0.14285714285714;
+17622 +        P_Potability1  =     0.85714285714285;
+17623 +        Q_Potability0  =     0.14285714285714;
+17624 +        Q_Potability1  =     0.85714285714285;
+17625 +        I_Potability  = '1' ;
+17626 +        U_Potability  =                    1;
+17627 +        END;
+17628 +      ELSE DO;
+17629 +        _NODE_  =                   22;
+17630 +        _LEAF_  =                   11;
+17631 +        P_Potability0  =     0.82568807339449;
+17632 +        P_Potability1  =      0.1743119266055;
+17633 +        Q_Potability0  =     0.82568807339449;
+17634 +        Q_Potability1  =      0.1743119266055;
+17635 +        I_Potability  = '0' ;
+17636 +        U_Potability  =                    0;
+17637 +        END;
+17638 +      END;
+17639 +    ELSE DO;
+17640 +      _NODE_  =                   14;
+17641 +      _LEAF_  =                   10;
+17642 +      P_Potability0  =     0.43567251461988;
+17643 +      P_Potability1  =     0.56432748538011;
+17644 +      Q_Potability0  =     0.43567251461988;
+17645 +      Q_Potability1  =     0.56432748538011;
+17646 +      I_Potability  = '1' ;
+17647 +      U_Potability  =                    1;
+17648 +      END;
+17649 +    END;
+17650 +  ELSE DO;
+17651 +    IF  NOT MISSING(Hardness ) AND
+17652 +      Hardness  <     101.118201096076 THEN DO;
+17653 +      _NODE_  =                   12;
+17654 +      _LEAF_  =                    8;
+17655 +      P_Potability0  =                    0;
+17656 +      P_Potability1  =                    1;
+17657 +      Q_Potability0  =                    0;
+17658 +      Q_Potability1  =                    1;
+17659 +      I_Potability  = '1' ;
+17660 +      U_Potability  =                    1;
+17661 +      END;
+17662 +    ELSE DO;
+17663 +      _NODE_  =                   13;
+17664 +      _LEAF_  =                    9;
+17665 +      P_Potability0  =     0.65430809399477;
+17666 +      P_Potability1  =     0.34569190600522;
+17667 +      Q_Potability0  =     0.65430809399477;
+17668 +      Q_Potability1  =     0.34569190600522;
+17669 +      I_Potability  = '0' ;
+17670 +      U_Potability  =                    0;
+17671 +      END;
+17672 +    END;
+17673 +  END;
+17674 +
+17675 +*****  RESIDUALS R_ *************;
+17676 +IF  F_Potability  NE '0'
+17677 +AND F_Potability  NE '1'  THEN DO;
+17678 +        R_Potability0  = .;
+17679 +        R_Potability1  = .;
+17680 + END;
+17681 + ELSE DO;
+17682 +       R_Potability0  =  -P_Potability0 ;
+17683 +       R_Potability1  =  -P_Potability1 ;
+17684 +       SELECT( F_Potability  );
+17685 +          WHEN( '0'  ) R_Potability0  = R_Potability0  +1;
+17686 +          WHEN( '1'  ) R_Potability1  = R_Potability1  +1;
+17687 +       END;
+17688 + END;
+17689 +
+17690 +****************************************************************;
+17691 +******          END OF DECISION TREE SCORING CODE         ******;
+17692 +****************************************************************;
+17693 +
+17694 +drop _LEAF_;
+NOTE: %INCLUDE (level 1) ending.
+17695  run;
+
+NOTE: DATA STEP view saved on file EMWS1.TREE_TRAIN.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: View EMWS1.STAT_TRAIN.VIEW used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.06 seconds
+      
+
+17696  quit;
+17697  filename emflow;
+NOTE: Fileref EMFLOW has been deassigned.
+
+17698  filename emflow "C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\EMFLOWSCORE.sas";
+17699  *------------------------------------------------------------*;
+17700  * Tree: Scoring TEST data;
+17701  *------------------------------------------------------------*;
+17702  data EMWS1.Tree_TEST
+17703  / view=EMWS1.Tree_TEST
+17704  ;
+17705  set EMWS1.Stat_TEST
+17706  ;
+17707  %inc emflow;
+NOTE: %INCLUDE (level 1) file EMFLOW is file C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\Tree\EMFLOWSCORE.sas.
+17708 +****************************************************************;
+17709 +******             DECISION TREE SCORING CODE             ******;
+17710 +****************************************************************;
+17711 +
+17712 +******         LENGTHS OF NEW CHARACTER VARIABLES         ******;
+17713 +LENGTH F_Potability  $   12;
+17714 +LENGTH I_Potability  $   12;
+17715 +LENGTH _WARN_  $    4;
+17716 +
+17717 +******              LABELS FOR NEW VARIABLES              ******;
+17718 +label _NODE_ = 'Node' ;
+17719 +label _LEAF_ = 'Leaf' ;
+17720 +label P_Potability0 = 'Predicted: Potability=0' ;
+17721 +label P_Potability1 = 'Predicted: Potability=1' ;
+17722 +label Q_Potability0 = 'Unadjusted P: Potability=0' ;
+17723 +label Q_Potability1 = 'Unadjusted P: Potability=1' ;
+17724 +label R_Potability0 = 'Residual: Potability=0' ;
+17725 +label R_Potability1 = 'Residual: Potability=1' ;
+17726 +label F_Potability = 'From: Potability' ;
+17727 +label I_Potability = 'Into: Potability' ;
+17728 +label U_Potability = 'Unnormalized Into: Potability' ;
+17729 +label _WARN_ = 'Warnings' ;
+17730 +
+17731 +
+17732 +******      TEMPORARY VARIABLES FOR FORMATTED VALUES      ******;
+17733 +LENGTH _ARBFMT_12 $     12; DROP _ARBFMT_12;
+17734 +_ARBFMT_12 = ' '; /* Initialize to avoid warning. */
+17735 +
+17736 +
+17737 +_ARBFMT_12 = PUT( Potability , BEST12.);
+17738 + %DMNORMCP( _ARBFMT_12, F_Potability );
+17739 +
+17740 +******             ASSIGN OBSERVATION TO NODE             ******;
+17741 +IF  NOT MISSING(Sulfate ) AND
+17742 +  Sulfate  <     286.444334038812 THEN DO;
+17743 +  IF  NOT MISSING(ph ) AND
+17744 +        7.19333774685046 <= ph  THEN DO;
+17745 +    IF  NOT MISSING(Turbidity ) AND
+17746 +      Turbidity  <     3.15461617527314 THEN DO;
+17747 +      _NODE_  =                   10;
+17748 +      _LEAF_  =                    6;
+17749 +      P_Potability0  =               0.5625;
+17750 +      P_Potability1  =               0.4375;
+17751 +      Q_Potability0  =               0.5625;
+17752 +      Q_Potability1  =               0.4375;
+17753 +      I_Potability  = '0' ;
+17754 +      U_Potability  =                    0;
+17755 +      END;
+17756 +    ELSE DO;
+17757 +      _NODE_  =                   11;
+17758 +      _LEAF_  =                    7;
+17759 +      P_Potability0  =     0.12162162162162;
+17760 +      P_Potability1  =     0.87837837837837;
+17761 +      Q_Potability0  =     0.12162162162162;
+17762 +      Q_Potability1  =     0.87837837837837;
+17763 +      I_Potability  = '1' ;
+17764 +      U_Potability  =                    1;
+17765 +      END;
+17766 +    END;
+17767 +  ELSE DO;
+17768 +    IF  NOT MISSING(Solids ) AND
+17769 +      Solids  <     19398.8450390458 THEN DO;
+17770 +      IF  NOT MISSING(Organic_carbon ) AND
+17771 +        Organic_carbon  <     10.7148897100055 THEN DO;
+17772 +        _NODE_  =                   16;
+17773 +        _LEAF_  =                    1;
+17774 +        P_Potability0  =     0.42857142857142;
+17775 +        P_Potability1  =     0.57142857142857;
+17776 +        Q_Potability0  =     0.42857142857142;
+17777 +        Q_Potability1  =     0.57142857142857;
+17778 +        I_Potability  = '1' ;
+17779 +        U_Potability  =                    1;
+17780 +        END;
+17781 +      ELSE DO;
+17782 +        _NODE_  =                   17;
+17783 +        _LEAF_  =                    2;
+17784 +        P_Potability0  =     0.89130434782608;
+17785 +        P_Potability1  =     0.10869565217391;
+17786 +        Q_Potability0  =     0.89130434782608;
+17787 +        Q_Potability1  =     0.10869565217391;
+17788 +        I_Potability  = '0' ;
+17789 +        U_Potability  =                    0;
+17790 +        END;
+17791 +      END;
+17792 +    ELSE DO;
+17793 +      IF  NOT MISSING(Hardness ) AND
+17794 +        Hardness  <     193.974365294055 THEN DO;
+17795 +        IF  NOT MISSING(ph ) AND
+17796 +          ph  <     5.40697519851934 THEN DO;
+17797 +          _NODE_  =                   24;
+17798 +          _LEAF_  =                    3;
+17799 +          P_Potability0  =     0.83333333333333;
+17800 +          P_Potability1  =     0.16666666666666;
+17801 +          Q_Potability0  =     0.83333333333333;
+17802 +          Q_Potability1  =     0.16666666666666;
+17803 +          I_Potability  = '0' ;
+17804 +          U_Potability  =                    0;
+17805 +          END;
+17806 +        ELSE DO;
+17807 +          _NODE_  =                   25;
+17808 +          _LEAF_  =                    4;
+17809 +          P_Potability0  =     0.14285714285714;
+17810 +          P_Potability1  =     0.85714285714285;
+17811 +          Q_Potability0  =     0.14285714285714;
+17812 +          Q_Potability1  =     0.85714285714285;
+17813 +          I_Potability  = '1' ;
+17814 +          U_Potability  =                    1;
+17815 +          END;
+17816 +        END;
+17817 +      ELSE DO;
+17818 +        _NODE_  =                   19;
+17819 +        _LEAF_  =                    5;
+17820 +        P_Potability0  =                  0.6;
+17821 +        P_Potability1  =                  0.4;
+17822 +        Q_Potability0  =                  0.6;
+17823 +        Q_Potability1  =                  0.4;
+17824 +        I_Potability  = '0' ;
+17825 +        U_Potability  =                    0;
+17826 +        END;
+17827 +      END;
+17828 +    END;
+17829 +  END;
+17830 +ELSE DO;
+17831 +  IF  NOT MISSING(Sulfate ) AND
+17832 +         363.46745680074 <= Sulfate  THEN DO;
+17833 +    IF  NOT MISSING(ph ) AND
+17834 +          7.79417057963898 <= ph  THEN DO;
+17835 +      IF  NOT MISSING(Chloramines ) AND
+17836 +            9.43085791478326 <= Chloramines  THEN DO;
+17837 +        _NODE_  =                   23;
+17838 +        _LEAF_  =                   12;
+17839 +        P_Potability0  =     0.14285714285714;
+17840 +        P_Potability1  =     0.85714285714285;
+17841 +        Q_Potability0  =     0.14285714285714;
+17842 +        Q_Potability1  =     0.85714285714285;
+17843 +        I_Potability  = '1' ;
+17844 +        U_Potability  =                    1;
+17845 +        END;
+17846 +      ELSE DO;
+17847 +        _NODE_  =                   22;
+17848 +        _LEAF_  =                   11;
+17849 +        P_Potability0  =     0.82568807339449;
+17850 +        P_Potability1  =      0.1743119266055;
+17851 +        Q_Potability0  =     0.82568807339449;
+17852 +        Q_Potability1  =      0.1743119266055;
+17853 +        I_Potability  = '0' ;
+17854 +        U_Potability  =                    0;
+17855 +        END;
+17856 +      END;
+17857 +    ELSE DO;
+17858 +      _NODE_  =                   14;
+17859 +      _LEAF_  =                   10;
+17860 +      P_Potability0  =     0.43567251461988;
+17861 +      P_Potability1  =     0.56432748538011;
+17862 +      Q_Potability0  =     0.43567251461988;
+17863 +      Q_Potability1  =     0.56432748538011;
+17864 +      I_Potability  = '1' ;
+17865 +      U_Potability  =                    1;
+17866 +      END;
+17867 +    END;
+17868 +  ELSE DO;
+17869 +    IF  NOT MISSING(Hardness ) AND
+17870 +      Hardness  <     101.118201096076 THEN DO;
+17871 +      _NODE_  =                   12;
+17872 +      _LEAF_  =                    8;
+17873 +      P_Potability0  =                    0;
+17874 +      P_Potability1  =                    1;
+17875 +      Q_Potability0  =                    0;
+17876 +      Q_Potability1  =                    1;
+17877 +      I_Potability  = '1' ;
+17878 +      U_Potability  =                    1;
+17879 +      END;
+17880 +    ELSE DO;
+17881 +      _NODE_  =                   13;
+17882 +      _LEAF_  =                    9;
+17883 +      P_Potability0  =     0.65430809399477;
+17884 +      P_Potability1  =     0.34569190600522;
+17885 +      Q_Potability0  =     0.65430809399477;
+17886 +      Q_Potability1  =     0.34569190600522;
+17887 +      I_Potability  = '0' ;
+17888 +      U_Potability  =                    0;
+17889 +      END;
+17890 +    END;
+17891 +  END;
+17892 +
+17893 +*****  RESIDUALS R_ *************;
+17894 +IF  F_Potability  NE '0'
+17895 +AND F_Potability  NE '1'  THEN DO;
+17896 +        R_Potability0  = .;
+17897 +        R_Potability1  = .;
+17898 + END;
+17899 + ELSE DO;
+17900 +       R_Potability0  =  -P_Potability0 ;
+17901 +       R_Potability1  =  -P_Potability1 ;
+17902 +       SELECT( F_Potability  );
+17903 +          WHEN( '0'  ) R_Potability0  = R_Potability0  +1;
+17904 +          WHEN( '1'  ) R_Potability1  = R_Potability1  +1;
+17905 +       END;
+17906 + END;
+17907 +
+17908 +****************************************************************;
+17909 +******          END OF DECISION TREE SCORING CODE         ******;
+17910 +****************************************************************;
+17911 +
+17912 +drop _LEAF_;
+NOTE: %INCLUDE (level 1) ending.
+17913  run;
+
+NOTE: DATA STEP view saved on file EMWS1.TREE_TEST.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: View EMWS1.STAT_TEST.VIEW used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.04 seconds
+      
+
+17914  quit;
+17915  filename emflow;
+NOTE: Fileref EMFLOW has been deassigned.
+
+NOTE: View EMWS1.TREE_TRAIN.VIEW used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.07 seconds
+      
+17917  proc sort data=WORK.EM_USER_REPORT;
+17918  by ID VIEW;
+17919  run;
+
+NOTE: There were 132 observations read from the data set WORK.EM_USER_REPORT.
+NOTE: The data set WORK.EM_USER_REPORT has 132 observations and 4 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+17920  *------------------------------------------------------------*;
+17921  * Tree: Computing metadata for TRAIN data;
+17922  *------------------------------------------------------------*;
+
+NOTE: View EMWS1.TREE_TRAIN.VIEW used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.09 seconds
+      
+18287  data EMWS1.Tree_EMINFO;
+18288  length TARGET KEY $32 DATA $43;
+18289  input TARGET KEY DATA $;
+18290  cards;
+
+NOTE: The data set EMWS1.TREE_EMINFO has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+18294  run;
+18295  proc sort data = EMWS1.Tree_EMINFO NOTHREADS;
+18296  by TARGET KEY;
+18297  run;
+
+NOTE: There were 3 observations read from the data set EMWS1.TREE_EMINFO.
+NOTE: The data set EMWS1.TREE_EMINFO has 3 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: View EMWS1.TREE_TRAIN.VIEW used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.07 seconds
+      
+NOTE: View EMWS1.TREE_TEST.VIEW used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.06 seconds
+      

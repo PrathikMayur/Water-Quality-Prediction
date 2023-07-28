@@ -1,0 +1,31 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Summary Statistics for Class Targets
+
+Data=DATA
+
+              Numeric    Formatted    Frequency
+ Variable      Value       Value        Count      Percent    Label
+
+Potability       0           0           1998      60.9890         
+Potability       1           1           1278      39.0110         
+
+
+Data=TEST
+
+              Numeric    Formatted    Frequency
+ Variable      Value       Value        Count      Percent    Label
+
+Potability       0           0           400       60.8828         
+Potability       1           1           257       39.1172         
+
+
+Data=TRAIN
+
+              Numeric    Formatted    Frequency
+ Variable      Value       Value        Count      Percent    Label
+
+Potability       0           0           1598      61.0157         
+Potability       1           1           1021      38.9843         

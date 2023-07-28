@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  Location="CATALOG" Catalog="SASHELP.EMSAMP.Fimport.SOURCE" ImportType="Local" GuessRows="500"
+ Delimiter="," NameRow="Y" SkipRows="0" MaxRows="1000000" MaxCols="10000" FileType="csv"
+ Role="TRAIN" ForceRun="N" Summarize="N" AdvancedAdvisor="N" RunAction="Train" Component="FileImport"
+ IFileName="C:\Users\sbattina\Desktop\Water quality\water_quality_new.csv" AccessTable="NoTableName"
+ UserID="NoUserID" Password="NoPassword" RawCreateTime="1985654847.2" CreateTime="03DEC2022:02:47:27"
+ RunId="5fa553df-7f42-4200-9136-531d5560068e" RawLastTimeRun="1985654950" RawRunTime="5.8049998283"
+ LastTimeRun="03DEC2022:02:49:10" RunTime="0 Hr. 0 Min. 5.80 Sec.">
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES ><![CDATA[
+USERTRAINCODE
+USERSCORECODE
+USERREPORTCODE
+VARIABLESETDELTA
+DELTACODE
+]]>
+</FILEPROPERTIES></_ROOT_>

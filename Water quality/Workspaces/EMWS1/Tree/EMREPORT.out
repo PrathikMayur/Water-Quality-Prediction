@@ -1,0 +1,135 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+Variable Importance
+
+                           Number of
+                           Splitting
+Variable Name     Label      Rules           Importance
+
+ph                             3                 1.0000
+Sulfate                        2                 0.8037
+Hardness                       2                 0.5298
+Solids                         1                 0.4846
+Chloramines                    1                 0.3799
+Turbidity                      1                 0.3469
+Organic_carbon                 1                 0.2474
+ 
+                                                                                                                                                                                                                                                                
+ 
+Tree Leaf Report
+
+                                 Training
+Node               Training       Percent
+ Id     Depth    Observations        1
+
+ 13       3          1915          0.35  
+ 14       3           342          0.56  
+ 22       4           109          0.17  
+ 11       3            74          0.88  
+ 19       4            55          0.40  
+ 17       4            46          0.11  
+ 25       5            35          0.86  
+ 10       3            16          0.44  
+ 12       3             7          1.00  
+ 16       4             7          0.57  
+ 23       4             7          0.86  
+ 24       5             6          0.17  
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Fit Statistics
+
+Target=Potability Target Label=' '
+
+   Fit
+Statistics    Statistics Label                Train       Test
+
+  _NOBS_      Sum of Frequencies            2619.00     657.00
+  _MISC_      Misclassification Rate           0.34       0.38
+  _MAX_       Maximum Absolute Error           0.89       0.89
+  _SSE_       Sum of Squared Errors         1140.23     307.33
+  _ASE_       Average Squared Error            0.22       0.23
+  _RASE_      Root Average Squared Error       0.47       0.48
+  _DIV_       Divisor for ASE               5238.00    1314.00
+  _DFT_       Total Degrees of Freedom      2619.00        .  
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Classification Table
+
+Data Role=TRAIN Target Variable=Potability Target Label=' '
+
+                       Target        Outcome     Frequency       Total
+Target    Outcome    Percentage    Percentage      Count      Percentage
+
+  0          0         66.6511       89.5494        1431        54.6392 
+  1          0         33.3489       70.1273         716        27.3387 
+  0          1         35.3814       10.4506         167         6.3765 
+  1          1         64.6186       29.8727         305        11.6457 
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Event Classification Table
+
+Data Role=TRAIN Target=Potability Target Label=' '
+
+  False       True        False       True
+Negative    Negative    Positive    Positive
+
+   716        1431         167         305  
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Assessment Score Rankings
+
+Data Role=TRAIN Target Variable=Potability Target Label=' '
+
+                                                                                           Mean
+                               Cumulative        %       Cumulative      Number of      Posterior
+Depth       Gain      Lift        Lift       Response    % Response    Observations    Probability
+
+   5     120.414    2.20414      2.20414      85.9270      85.9270          131          0.85927  
+  10      82.586    1.44757      1.82586      56.4327      71.1799          131          0.56433  
+  15      69.976    1.44757      1.69976      56.4327      66.2642          131          0.56433  
+  20      59.782    1.29200      1.59782      50.3678      62.2901          131          0.50368  
+  25      45.965    0.90695      1.45965      35.3569      56.9034          131          0.35357  
+  30      36.416    0.88675      1.36416      34.5692      53.1811          131          0.34569  
+  35      29.596    0.88675      1.29596      34.5692      50.5222          131          0.34569  
+  40      24.481    0.88675      1.24481      34.5692      48.5281          131          0.34569  
+  45      20.502    0.88675      1.20502      34.5692      46.9771          131          0.34569  
+  50      17.320    0.88675      1.17320      34.5692      45.7363          131          0.34569  
+  55      14.716    0.88675      1.14716      34.5692      44.7211          131          0.34569  
+  60      12.545    0.88675      1.12545      34.5692      43.8751          131          0.34569  
+  65      10.709    0.88675      1.10709      34.5692      43.1593          131          0.34569  
+  70       9.135    0.88675      1.09135      34.5692      42.5457          131          0.34569  
+  75       7.771    0.88675      1.07771      34.5692      42.0139          131          0.34569  
+  80       6.578    0.88675      1.06578      34.5692      41.5486          131          0.34569  
+  85       5.525    0.88675      1.05525      34.5692      41.1381          131          0.34569  
+  90       4.589    0.88675      1.04589      34.5692      40.7731          131          0.34569  
+  95       3.203    0.78272      1.03203      30.5136      40.2332          131          0.30514  
+ 100       0.000    0.38667      1.00000      15.0741      38.9843          130          0.15074  
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Assessment Score Distribution
+
+Data Role=TRAIN Target Variable=Potability Target Label=' '
+
+ Posterior     Number                     Mean
+Probability      of      Number of     Posterior
+   Range       Events    Nonevents    Probability    Percentage
+
+ 0.95-1.00         7           0        1.00000         0.2673 
+ 0.85-0.90       101          15        0.87069         4.4292 
+ 0.55-0.60       197         152        0.56447        13.3257 
+ 0.40-0.45         7           9        0.43750         0.6109 
+ 0.35-0.40        22          33        0.40000         2.1000 
+ 0.30-0.35       662        1253        0.34569        73.1195 
+ 0.15-0.20        20          95        0.17391         4.3910 
+ 0.10-0.15         5          41        0.10870         1.7564 

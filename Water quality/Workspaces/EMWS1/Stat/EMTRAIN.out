@@ -1,0 +1,163 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+          Measurement    Frequency
+Role         Level         Count
+
+ID         INTERVAL          1    
+INPUT      INTERVAL          9    
+TARGET     BINARY            1    
+ 
+                                                                                                                                                                                                                                                                
+ 
+Variable Levels Summary
+(maximum 500 observations printed)
+
+                        Frequency
+ Variable     Role        Count
+
+Potability    TARGET          2  
+_dataobs_     ID           2619  
+ 
+                                                                                                                                                                                                                                                                
+ 
+Class Variable Summary Statistics
+(maximum 500 observations printed)
+
+Data Role=TRAIN
+
+                                 Number
+Data      Variable                 of                            Mode                  Mode2
+Role        Name        Role     Levels    Missing    Mode    Percentage    Mode2    Percentage
+
+TRAIN    Potability    TARGET       2         0        0        61.02         1        38.98   
+ 
+                                                                                                                                                                                                                                                                
+ 
+Distribution of Class Target and Segment Variables
+(maximum 500 observations printed)
+
+Data Role=TRAIN
+
+Data      Variable                         Frequency
+Role        Name        Role     Level         Count    Percent
+
+TRAIN    Potability    TARGET      0            1598    61.0157
+TRAIN    Potability    TARGET      1            1021    38.9843
+ 
+                                                                                                                                                                                                                                                                
+ 
+Interval Variable Summary Statistics
+(maximum 500 observations printed)
+
+Data Role=TRAIN
+
+                                        Standard          Non
+Variable           Role         Mean    Deviation     Missing     Missing     Minimum      Median     Maximum    Skewness    Kurtosis
+
+Chloramines        INPUT    7.122352    1.580985         2619           0       0.352    7.130437      13.127    -0.00197    0.655612
+Conductivity       INPUT    427.2311    80.62315         2619           0    181.4838    424.2512    753.3426    0.219232    -0.32048
+Hardness           INPUT    196.6031    33.35474         2619           0      47.432       197.3     323.124    -0.04802     0.65672
+Organic_carbon     INPUT    14.35577    3.313739         2619           0         2.2    14.28296        28.3    0.020129    0.072172
+Solids             INPUT     22127.7    8908.075         2619           0    728.7508    20988.09     61227.2    0.650943    0.467798
+Sulfate            INPUT    333.6453    36.49113         2619           0         129    333.7758    476.5397    -0.06928    1.849962
+Trihalomethanes    INPUT    66.32067    15.55533         2619           0       0.738    66.39629         124    -0.10508    0.520084
+Turbidity          INPUT    3.967907    0.776353         2619           0    1.492207    3.951304    6.494749    -0.00198    -0.05156
+ph                 INPUT    7.093837    1.466207         2619           0           0    7.080795          14    -0.00011    1.450232
+ 
+                                                                                                                                                                                                                                                                
+ 
+Interval Variable Summary Statistics by Class Target
+(maximum 500 observations printed)
+
+Data Role=TRAIN Variable=Chloramines
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role        Label
+
+Potability      0        7.08791           0        1598    1.683993    12.65336    7.098628    1.492012     -0.02305    0.418673    INPUT    Chloramines
+Potability      1       7.196435           0        1021       0.352      13.127    7.159482    1.711075     0.004337     0.74873    INPUT    Chloramines
+_OVERALL_               7.130437           0        2619       0.352      13.127    7.122352    1.580985     -0.00197    0.655612    INPUT    Chloramines
+
+
+Data Role=TRAIN Variable=Conductivity
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role        Label
+
+Potability      0       424.2512           0        1598    181.4838    753.3426     428.336    80.59227     0.243001    -0.19964    INPUT    Conductivity
+Potability      1       423.1101           0        1021    201.6197    674.4435    425.5018    80.68057     0.182807    -0.51056    INPUT    Conductivity
+_OVERALL_               424.2512           0        2619    181.4838    753.3426    427.2311    80.62315     0.219232    -0.32048    INPUT    Conductivity
+
+
+Data Role=TRAIN Variable=Hardness
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role      Label
+
+Potability      0       197.4691           0        1598    103.4648    304.2359    197.0871    31.46928     0.013107    0.342559    INPUT    Hardness
+Potability      1       196.9824           0        1021      47.432     323.124    195.8454    36.11163     -0.09567     0.81104    INPUT    Hardness
+_OVERALL_                  197.3           0        2619      47.432     323.124    196.6031    33.35474     -0.04802     0.65672    INPUT    Hardness
+
+
+Data Role=TRAIN Variable=Organic_carbon
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role         Label
+
+Potability      0        14.3561           0        1598    4.371899        28.3    14.43498    3.352228     0.071541    0.151312    INPUT    Organic_carbon
+Potability      1        14.1824           0        1021         2.2    23.56964    14.23179    3.250342     -0.07546     -0.0925    INPUT    Organic_carbon
+_OVERALL_               14.28296           0        2619         2.2        28.3    14.35577    3.313739     0.020129    0.072172    INPUT    Organic_carbon
+
+
+Data Role=TRAIN Variable=Solids
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role     Label
+
+Potability      0       20626.52           0        1598    3773.281     61227.2    21818.95    8649.777     0.668578    0.494379    INPUT    Solids
+Potability      1          21403           0        1021    728.7508    56488.67    22610.94    9281.655     0.610357    0.395885    INPUT    Solids
+_OVERALL_               20988.09           0        2619    728.7508     61227.2     22127.7    8908.075     0.650943    0.467798    INPUT    Solids
+
+
+Data Role=TRAIN Variable=Sulfate
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role      Label
+
+Potability      0       333.7758           0        1598    203.4445    460.1071    334.0999    32.26224     0.157113    1.632304    INPUT    Sulfate
+Potability      1       333.7758           0        1021         129    476.5397    332.9337    42.27649     -0.20277    1.441941    INPUT    Sulfate
+_OVERALL_               333.7758           0        2619         129    476.5397    333.6453    36.49113     -0.06928    1.849962    INPUT    Sulfate
+
+
+Data Role=TRAIN Variable=Trihalomethanes
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role          Label
+
+Potability      0       66.39629           0        1598       0.738    114.2087    66.17069    15.41058      -0.1206    0.433838    INPUT    Trihalomethanes
+Potability      1       66.39629           0        1021    8.175876         124    66.55541    15.78393     -0.08467     0.64525    INPUT    Trihalomethanes
+_OVERALL_               66.39629           0        2619       0.738         124    66.32067    15.55533     -0.10508    0.520084    INPUT    Trihalomethanes
+
+
+Data Role=TRAIN Variable=Turbidity
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role       Label
+
+Potability      0        3.94922           0        1598    1.680554    6.494749    3.963717    0.771283     -0.02478    -0.13055    INPUT    Turbidity
+Potability      1       3.948304           0        1021    1.492207    6.494249    3.974464    0.784558     0.031116    0.065859    INPUT    Turbidity
+_OVERALL_               3.951304           0        2619    1.492207    6.494749    3.967907    0.776353     -0.00198    -0.05156    INPUT    Turbidity
+
+
+Data Role=TRAIN Variable=ph
+
+              Target                                 Non                                        Standard
+  Target      Level       Median     Missing     Missing     Minimum     Maximum        Mean    Deviation    Skewness    Kurtosis    Role     Label
+
+Potability      0       7.080795           0        1598           0          14    7.096131    1.531509     0.043632    1.191631    INPUT     ph  
+Potability      1       7.080795           0        1021    0.227499     13.1754    7.090248    1.358438     -0.10046    1.919312    INPUT     ph  
+_OVERALL_               7.080795           0        2619           0          14    7.093837    1.466207     -0.00011    1.450232    INPUT     ph  

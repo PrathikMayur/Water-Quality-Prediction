@@ -1,0 +1,143 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+          Measurement    Frequency
+ Role        Level         Count
+
+INPUT      INTERVAL          9    
+TARGET     BINARY            1    
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Model Events
+
+                                      Number
+                       Measurement      of
+  Target      Event       Level       Levels      Order       Label
+
+Potability      1        BINARY          2      Descending         
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Predicted and decision variables
+
+Type           Variable                Label
+
+TARGET       Potability                              
+PREDICTED    P_Potability1    Predicted: Potability=1
+RESIDUAL     R_Potability1    Residual: Potability=1 
+PREDICTED    P_Potability0    Predicted: Potability=0
+RESIDUAL     R_Potability0    Residual: Potability=0 
+FROM         F_Potability     From: Potability       
+INTO         I_Potability     Into: Potability       
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+
+The DMREG Procedure
+
+                Model Information
+
+Training Data Set              WORK.EM_DMREG.VIEW
+DMDB Catalog                   WORK.REG_DMDB     
+Target Variable                Potability        
+Target Measurement Level       Ordinal           
+Number of Target Categories    2                 
+Error                          MBernoulli        
+Link Function                  Logit             
+Number of Model Parameters     10                
+Number of Observations         2619              
+
+
+            Target Profile
+ 
+ Ordered                        Total
+   Value     Potability     Frequency
+
+       1     1                   1021
+       2     0                   1598
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+
+The DMREG Procedure
+
+Newton-Raphson Ridge Optimization
+
+Without Parameter Scaling
+
+Parameter Estimates              10
+
+                                             Optimization Start
+
+Active Constraints                                  0  Objective Function                       1751.2677066
+Max Abs Gradient Element                 16.310719147                                                       
+
+
+                                                                                                        Ratio
+                                                                                                      Between
+                                                                                                       Actual
+                                                                 Objective     Max Abs                    and
+                     Function         Active        Objective     Function    Gradient              Predicted
+Iter     Restarts       Calls    Constraints         Function       Change     Element     Ridge       Change
+
+   1            0           2              0             1746       5.3880      1.1573         0        1.000
+   2            0           3              0             1746      0.00115    0.000263         0        1.000
+
+                                            Optimization Results
+
+Iterations                                          2  Function Calls                                      5
+Hessian Calls                                       3  Active Constraints                                  0
+Objective Function                       1745.8785785  Max Abs Gradient Element                 0.0002625931
+Ridge                                               0  Actual Over Pred Change                  1.0001623157
+
+Convergence criterion (GCONV=1E-6) satisfied.                                                     
+
+
+     Likelihood Ratio Test for Global Null Hypothesis: BETA=0
+ 
+     -2 Log Likelihood          Likelihood
+  Intercept     Intercept &          Ratio
+       Only      Covariates     Chi-Square       DF     Pr > ChiSq
+
+   3502.535        3491.757        10.7783        9         0.2912
+
+
+                              Analysis of Maximum Likelihood Estimates
+ 
+                                     Standard          Wald                  Standardized
+Parameter          DF    Estimate       Error    Chi-Square    Pr > ChiSq        Estimate    Exp(Est)
+
+Intercept           1     -0.2228      0.6833          0.11        0.7444                       0.800
+Chloramines         1      0.0284      0.0255          1.24        0.2655          0.0247       1.029
+Conductivity        1    -0.00044    0.000499          0.79        0.3734         -0.0198       1.000
+Hardness            1    -0.00105     0.00122          0.75        0.3862         -0.0194       0.999
+Organic_carbon      1     -0.0184      0.0122          2.28        0.1311         -0.0335       0.982
+Solids              1    9.983E-6    4.581E-6          4.75        0.0293          0.0490       1.000
+Sulfate             1    -0.00059     0.00112          0.28        0.5956         -0.0119       0.999
+Trihalomethanes     1     0.00156     0.00259          0.36        0.5469          0.0134       1.002
+Turbidity           1      0.0131      0.0518          0.06        0.8003         0.00561       1.013
+ph                  1     0.00748      0.0276          0.07        0.7863         0.00605       1.008
+
+
+      Odds Ratio Estimates
+                
+                           Point
+Effect                  Estimate
+
+Chloramines                1.029
+Conductivity               1.000
+Hardness                   0.999
+Organic_carbon             0.982
+Solids                     1.000
+Sulfate                    0.999
+Trihalomethanes            1.002
+Turbidity                  1.013
+ph                         1.008

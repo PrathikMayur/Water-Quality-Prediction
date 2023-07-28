@@ -1,0 +1,71 @@
+*------------------------------------------------------------*
+User:                sbattina
+Date:                December 03, 2022
+Time:                02:49:20
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+          Measurement    Frequency
+ Role        Level         Count
+ 
+INPUT      INTERVAL          9
+TARGET     BINARY            1
+ 
+ 
+ 
+ 
+Partition Summary
+ 
+                                  Number of
+Type          Data Set          Observations
+ 
+DATA     EMWS1.FIMPORT_train        3276
+TRAIN    EMWS1.Part_TRAIN           2619
+TEST     EMWS1.Part_TEST             657
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Summary Statistics for Class Targets
+ 
+Data=DATA
+ 
+              Numeric    Formatted    Frequency
+ Variable      Value       Value        Count      Percent    Label
+ 
+Potability       0           0           1998      60.9890
+Potability       1           1           1278      39.0110
+ 
+ 
+Data=TEST
+ 
+              Numeric    Formatted    Frequency
+ Variable      Value       Value        Count      Percent    Label
+ 
+Potability       0           0           400       60.8828
+Potability       1           1           257       39.1172
+ 
+ 
+Data=TRAIN
+ 
+              Numeric    Formatted    Frequency
+ Variable      Value       Value        Count      Percent    Label
+ 
+Potability       0           0           1598      61.0157
+Potability       1           1           1021      38.9843

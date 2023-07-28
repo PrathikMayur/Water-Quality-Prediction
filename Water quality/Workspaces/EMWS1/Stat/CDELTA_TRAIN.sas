@@ -1,0 +1,14 @@
+if ROLE in('INPUT', 'REJECTED') then do;
+if upcase(NAME) in(
+'CHLORAMINES'
+'CONDUCTIVITY'
+'HARDNESS'
+'ORGANIC_CARBON'
+'SOLIDS'
+'SULFATE'
+'TRIHALOMETHANES'
+'TURBIDITY'
+'PH'
+) then ROLE='INPUT';
+else delete;
+end;

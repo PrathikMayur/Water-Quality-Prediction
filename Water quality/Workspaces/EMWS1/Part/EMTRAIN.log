@@ -1,0 +1,205 @@
+*------------------------------------------------------------*
+* Training Log
+Date:                December 03, 2022
+Time:                02:49:18
+*------------------------------------------------------------*
+11433  proc freq data=EMWS1.Part_VariableSet noprint;
+11434  table ROLE*LEVEL/out=WORK.PartMETA;
+11435  run;
+
+NOTE: There were 10 observations read from the data set EMWS1.PART_VARIABLESET.
+NOTE: The data set WORK.PARTMETA has 2 observations and 4 variables.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.04 seconds
+      
+
+11436  proc print data=WORK.PartMETA label noobs;
+11437  var ROLE LEVEL COUNT;
+11438  label ROLE = "%sysfunc(sasmsg(sashelp.dmine, meta_role_vlabel, NOQUOTE))" LEVEL = "%sysfunc(sasmsg(sashelp.dmine, meta_level_vlabel, NOQUOTE))" COUNT = "%sysfunc(sasmsg(sashelp.dmine, rpt_count_vlabel, NOQUOTE))";
+11439  title9 ' ';
+11440  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_varSummary_title  , NOQUOTE))";
+11441  run;
+
+NOTE: There were 2 observations read from the data set WORK.PARTMETA.
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+11442  title10;
+
+11450  *------------------------------------------------------------*;
+11451  * Part: Determine number of observations;
+11452  *------------------------------------------------------------*;
+11453  proc sql;
+11454  reset noprint;
+11455  select count(*) into :_tmpa from EMWS1.FIMPORT_train
+11456  ;
+NOTE: View EMWS1.FIMPORT_TRAIN.VIEW used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+NOTE: There were 3276 observations read from the data set EMWS1.FIMPORT_DATA.
+11457  quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.06 seconds
+      
+
+trainPct=80 validatePct=0 testPct=20 
+NOTE: View EMWS1.FIMPORT_TRAIN.VIEW used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+11458  *------------------------------------------------------------*;
+11459  * Part: Retrieving stratification variable(s) levels;
+11460  *------------------------------------------------------------*;
+11461  proc freq data=EMWS1.FIMPORT_train noprint;
+11462  format
+11463  Potability BEST12.0
+11464  ;
+11465  table
+11466  Potability
+11467  /out=WORK.Part_FREQ(drop=percent);
+11468  run;
+
+NOTE: View EMWS1.FIMPORT_TRAIN.VIEW used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.04 seconds
+      
+NOTE: There were 3276 observations read from the data set EMWS1.FIMPORT_DATA.
+NOTE: There were 3276 observations read from the data set EMWS1.FIMPORT_TRAIN.
+NOTE: The data set WORK.PART_FREQ has 2 observations and 2 variables.
+NOTE: PROCEDURE FREQ used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.06 seconds
+      
+
+11469  proc sort data=WORK.Part_FREQ;
+11470  by descending count;
+11471  run;
+
+NOTE: There were 2 observations read from the data set WORK.PART_FREQ.
+NOTE: The data set WORK.PART_FREQ has 2 observations and 2 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+11472  * Part: Retrieving levels that meet minimum requirement;
+11473  data WORK.Part_FREQ2(keep = count);
+11474  set WORK.Part_FREQ;
+11475  where (.01 * 80 * count) >= 3;
+11476  run;
+
+NOTE: There were 2 observations read from the data set WORK.PART_FREQ.
+      WHERE (0.8*count)>=3;
+NOTE: The data set WORK.PART_FREQ2 has 2 observations and 1 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+11477  *------------------------------------------------------------*;
+11478  * Part: Create stratified partitioning;
+11479  *------------------------------------------------------------*;
+11480  data
+11481  EMWS1.Part_TRAIN(label="")
+11482  EMWS1.Part_TEST(label="")
+11483  ;
+11484  retain _seed_ 12345;
+11485  drop _seed_ _genvalue_;
+11486  call ranuni(_seed_, _genvalue_);
+11487  label _dataobs_ = "%sysfunc(sasmsg(sashelp.dmine, sample_dataobs_vlabel, NOQUOTE))";
+11488  _dataobs_ = _N_;
+11489  drop _c00:;
+11490  set EMWS1.FIMPORT_train;
+11491  length _Pformat1 $58;
+11492  drop _Pformat1;
+11493  _Pformat1 = strip(put(Potability, BEST12.0));
+11494  if
+11495  _Pformat1 = '0'
+11496  then do;
+11497  if (1998+1-_C000003)*_genvalue_ <= (1598 - _C000001) then do;
+11498  _C000001 + 1;
+11499  output EMWS1.Part_TRAIN;
+11500  end;
+11501  else do;
+11502  _C000002 + 1;
+11503  output EMWS1.Part_TEST;
+11504  end;
+11505  _C000003+1;
+11506  end;
+11507  else if
+11508  _Pformat1 = '1'
+11509  then do;
+11510  if (1278+1-_C000006)*_genvalue_ <= (1022 - _C000004) then do;
+11511  _C000004 + 1;
+11512  output EMWS1.Part_TRAIN;
+11513  end;
+11514  else do;
+11515  _C000005 + 1;
+11516  output EMWS1.Part_TEST;
+11517  end;
+11518  _C000006+1;
+11519  end;
+11520  run;
+
+NOTE: View EMWS1.FIMPORT_TRAIN.VIEW used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.06 seconds
+      
+NOTE: There were 3276 observations read from the data set EMWS1.FIMPORT_DATA.
+NOTE: There were 3276 observations read from the data set EMWS1.FIMPORT_TRAIN.
+NOTE: The data set EMWS1.PART_TRAIN has 2619 observations and 11 variables.
+NOTE: The data set EMWS1.PART_TEST has 657 observations and 11 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.09 seconds
+      
+
+11521  data _tempNobs;
+11522  length Type $8 Table $32 Nobs 8;
+11523  label type= "%sysfunc(sasmsg(sashelp.dmine, meta_type_vlabel,    NOQUOTE))" table = "%sysfunc(sasmsg(sashelp.dmine, meta_dataset_vlabel, NOQUOTE))" nobs = "%sysfunc(sasmsg(sashelp.dmine,  rpt_numObs_vlabel,   NOQUOTE))";
+11524  type='DATA';
+11525  table="EMWS1.FIMPORT_train";
+11526  Nobs=3276;
+11527  output;
+11528  type='TRAIN';
+11529  table="EMWS1.Part_TRAIN";
+11530  Nobs=2619;
+11531  output;
+11532  type='TEST';
+11533  table="EMWS1.Part_TEST";
+11534  Nobs=657;
+11535  output;
+11536  run;
+
+NOTE: The data set WORK._TEMPNOBS has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+11537  %let _cn = %sysfunc(getoption(CENTER));
+11538  %let _nb = %sysfunc(getoption(NUMBER));
+11539  options nonumber nocenter;
+11540  proc print data=_tempNobs noobs label;
+11541  title9 ' ';
+11542  title10 "%sysfunc(sasmsg(sashelp.dmine, rpt_partitionSummary_title, NOQUOTE))";
+11543  run;
+
+NOTE: There were 3 observations read from the data set WORK._TEMPNOBS.
+NOTE: The PROCEDURE PRINT printed page 2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+11544  title10;
+11545  options &_cn &_nb;
+11546  run;
+
+ERROR:  Windows error code: 1224 in hc_disk_truncate for C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\part.sas7bcat, The requested operation cannot be performed on a file with a user-mapped section open.

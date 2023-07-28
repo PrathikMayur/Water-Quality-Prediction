@@ -1,0 +1,16 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+Variable Importance
+
+Obs    NAME               LABEL    NRULES    IMPORTANCE
+
+ 1     ph                            35        1.00000 
+ 2     Sulfate                       28        0.84871 
+ 3     Solids                        16        0.59788 
+ 4     Hardness                      19        0.58593 
+ 5     Chloramines                   16        0.56085 
+ 6     Conductivity                   9        0.38242 
+ 7     Organic_carbon                 8        0.34808 
+ 8     Turbidity                      6        0.28105 
+ 9     Trihalomethanes                5        0.24129 

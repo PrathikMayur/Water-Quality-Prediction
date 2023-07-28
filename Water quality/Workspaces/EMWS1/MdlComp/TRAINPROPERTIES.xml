@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?><_ROOT_  NumberOfReportedLevels="1E-6" NormalizeReportingVariables="Y" DecileBin="20" LiftEpsilon="1E-6"
+ ProfitEpsilon="1E-6" RoiEpsilon="1E-6" ScoreDistBin="20" RocChart="Y" RocEpsilon="0.01"
+ AssessAllTargetLevels="N" SelectionData="DEFAULT" HPCriteria="DEFAULT" intervalViyaCriteria="DEFAULT"
+ classViyaCriteria="DEFAULT" SelectionTable="TRAIN" SelectionCriteria="DEFAULT" SelectionDepth="10"
+ NumberofBins="20" RecomputeAssess="N" TargetName="Potability" ModelId="AutoNeural"
+ ModelDescription="AutoNeural" ModelCriteria="Train: Misclassification Rate" ForceRun="N"
+ RunAction="Train" Component="ModelCompare" RawCreateTime="1985657365.5" CreateTime="03DEC2022:03:29:25"
+ RunId="2d64a2a6-199c-4fdf-ac57-773fa8389861" StatisticUsed="_MISC_" TargetLabel=""
+ RawLastTimeRun="1985657387.3" RawRunTime="16.493000031" LastTimeRun="03DEC2022:03:29:47"
+ RunTime="0 Hr. 0 Min. 16.49 Sec.">
+<VARIABLEPROPERTIES/>
+<FILEPROPERTIES/>
+</_ROOT_>

@@ -1,0 +1,107 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Fit Statistics
+
+Target=Potability Target Label=' '
+
+   Fit
+Statistics    Statistics Label                    Train       Test
+
+ _AIC_        Akaike's Information Criterion    3511.76        .  
+ _ASE_        Average Squared Error                0.24       0.24
+ _AVERR_      Average Error Function               0.67       0.67
+ _DFE_        Degrees of Freedom for Error      2609.00        .  
+ _DFM_        Model Degrees of Freedom            10.00        .  
+ _DFT_        Total Degrees of Freedom          2619.00        .  
+ _DIV_        Divisor for ASE                   5238.00    1314.00
+ _ERR_        Error Function                    3491.76     880.58
+ _FPE_        Final Prediction Error               0.24        .  
+ _MAX_        Maximum Absolute Error               0.70       0.71
+ _MSE_        Mean Square Error                    0.24       0.24
+ _NOBS_       Sum of Frequencies                2619.00     657.00
+ _NW_         Number of Estimate Weights          10.00        .  
+ _RASE_       Root Average Sum of Squares          0.49       0.49
+ _RFPE_       Root Final Prediction Error          0.49        .  
+ _RMSE_       Root Mean Squared Error              0.49       0.49
+ _SBC_        Schwarz's Bayesian Criterion      3570.46        .  
+ _SSE_        Sum of Squared Errors             1240.53     313.44
+ _SUMW_       Sum of Case Weights Times Freq    5238.00    1314.00
+ _MISC_       Misclassification Rate               0.39       0.39
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Classification Table
+
+Data Role=TRAIN Target Variable=Potability Target Label=' '
+
+                       Target        Outcome     Frequency       Total
+Target    Outcome    Percentage    Percentage      Count      Percentage
+
+  0          0         61.0241       99.9374        1597        60.9775 
+  1          0         38.9759       99.9021        1020        38.9462 
+  0          1         50.0000        0.0626           1         0.0382 
+  1          1         50.0000        0.0979           1         0.0382 
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Event Classification Table
+
+Data Role=TRAIN Target=Potability Target Label=' '
+
+  False       True        False       True
+Negative    Negative    Positive    Positive
+
+  1020        1597          1           1   
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Assessment Score Rankings
+
+Data Role=TRAIN Target Variable=Potability Target Label=' '
+
+                                                                                           Mean
+                               Cumulative        %       Cumulative      Number of      Posterior
+Depth      Gain       Lift        Lift       Response    % Response    Observations    Probability
+
+   5     46.8587    1.46859      1.46859      57.2519      57.2519          131          0.45961  
+  10     31.1938    1.15529      1.31194      45.0382      51.1450          131          0.43668  
+  15     24.0140    1.09655      1.24014      42.7481      48.3461          131          0.42580  
+  20     20.4241    1.09655      1.20424      42.7481      46.9466          131          0.41857  
+  25     16.7037    1.01822      1.16704      39.6947      45.4962          131          0.41300  
+  30     11.2863    0.84199      1.11286      32.8244      43.3842          131          0.40795  
+  35      8.5356    0.92031      1.08536      35.8779      42.3119          131          0.40290  
+  40      7.2069    0.97906      1.07207      38.1679      41.7939          131          0.39849  
+  45      5.7383    0.93990      1.05738      36.6412      41.2214          131          0.39414  
+  50      4.1718    0.90073      1.04172      35.1145      40.6107          131          0.38997  
+  55      4.3142    1.05738      1.04314      41.2214      40.6662          131          0.38623  
+  60      2.9643    0.88115      1.02964      34.3511      40.1399          131          0.38251  
+  65      1.3702    0.82241      1.01370      32.0611      39.5185          131          0.37839  
+  70      1.6822    1.05738      1.01682      41.2214      39.6401          131          0.37423  
+  75      0.9083    0.90073      1.00908      35.1145      39.3384          131          0.37030  
+  80      0.7206    0.97906      1.00721      38.1679      39.2653          131          0.36557  
+  85      0.7854    1.01822      1.00785      39.6947      39.2905          131          0.36063  
+  90      0.2991    0.92031      1.00299      35.8779      39.1009          131          0.35502  
+  95      0.7544    0.80283      0.99246      31.2977      38.6902          131          0.34634  
+ 100      0.0000    1.14444      1.00000      44.6154      38.9843          130          0.33006  
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Assessment Score Distribution
+
+Data Role=TRAIN Target Variable=Potability Target Label=' '
+
+ Posterior     Number                     Mean
+Probability      of      Number of     Posterior
+   Range       Events    Nonevents    Probability    Percentage
+
+ 0.50-0.55         1          1         0.50832         0.0764 
+ 0.45-0.50        52         36         0.46427         3.3601 
+ 0.40-0.45       345        506         0.41844        32.4933 
+ 0.35-0.40       527        907         0.37707        54.7537 
+ 0.30-0.35        96        148         0.33738         9.3165 

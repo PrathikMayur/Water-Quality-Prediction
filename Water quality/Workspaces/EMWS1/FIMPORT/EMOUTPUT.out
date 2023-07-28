@@ -1,0 +1,89 @@
+*------------------------------------------------------------*
+User:                sbattina
+Date:                December 03, 2022
+Time:                02:49:15
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+          Measurement    Frequency
+ Role        Level         Count
+ 
+INPUT      INTERVAL          9
+TARGET     BINARY            1
+ 
+ 
+ 
+ 
+ 
+The CONTENTS Procedure
+ 
+Data Set Name        EMWS1.FIMPORT_DATA            Observations          3276
+Member Type          DATA                          Variables             10
+Engine               V9                            Indexes               0
+Created              12/03/2022 02:49:13           Observation Length    80
+Last Modified        12/03/2022 02:49:13           Deleted Observations  0
+Protection                                         Compressed            NO
+Data Set Type                                      Sorted                NO
+Label
+Data Representation  WINDOWS_64
+Encoding             wlatin1  Western (Windows)
+ 
+ 
+                                    Engine/Host Dependent Information
+ 
+Data Set Page Size          65536
+Number of Data Set Pages    5
+First Data Page             1
+Max Obs per Page            817
+Obs in First Data Page      791
+Number of Data Set Repairs  0
+ExtendObsCounter            YES
+Filename                    C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\fimport_data.sas7bdat
+Release Created             9.0401M6
+Host Created                X64_SRV19
+Owner Name                  UOM\sbattina
+File Size                   384KB
+File Size (bytes)           393216
+ 
+ 
+        Alphabetic List of Variables and Attributes
+ 
+ #    Variable           Type    Len    Format     Informat
+ 
+ 4    Chloramines        Num       8    BEST12.    BEST32.
+ 6    Conductivity       Num       8    BEST12.    BEST32.
+ 2    Hardness           Num       8    BEST12.    BEST32.
+ 7    Organic_carbon     Num       8    BEST12.    BEST32.
+10    Potability         Num       8    BEST12.    BEST32.
+ 3    Solids             Num       8    BEST12.    BEST32.
+ 5    Sulfate            Num       8    BEST12.    BEST32.
+ 8    Trihalomethanes    Num       8    BEST12.    BEST32.
+ 9    Turbidity          Num       8    BEST12.    BEST32.
+ 1    ph                 Num       8    BEST12.    BEST32.
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Exported Attributes for TRAIN Port
+ 
+          Measurement    Frequency
+ Role        Level         Count
+ 
+INPUT      INTERVAL          9
+TARGET     BINARY            1

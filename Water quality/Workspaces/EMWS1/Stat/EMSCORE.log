@@ -1,0 +1,59 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                December 03, 2022
+Time:                02:49:44
+*------------------------------------------------------------*
+12113  *------------------------------------------------------------*;
+12114  * Stat: Scoring DATA data;
+12115  *------------------------------------------------------------*;
+12116  data EMWS1.Stat_TRAIN
+12117  / view=EMWS1.Stat_TRAIN
+12118  ;
+12119  set EMWS1.Part_TRAIN
+12120  ;
+12121  run;
+
+NOTE: DATA STEP view saved on file EMWS1.STAT_TRAIN.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+12122  quit;
+
+12123  *------------------------------------------------------------*;
+12124  * Stat: Scoring TEST data;
+12125  *------------------------------------------------------------*;
+12126  data EMWS1.Stat_TEST
+12127  / view=EMWS1.Stat_TEST
+12128  ;
+12129  set EMWS1.Part_TEST
+12130  ;
+12131  run;
+
+NOTE: DATA STEP view saved on file EMWS1.STAT_TEST.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+12132  quit;
+
+12133  *------------------------------------------------------------*;
+12134  * Stat: Computing metadata for TRAIN data;
+12135  *------------------------------------------------------------*;
+
+NOTE: View EMWS1.STAT_TRAIN.VIEW used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.03 seconds
+      
+NOTE: View EMWS1.STAT_TRAIN.VIEW used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.04 seconds
+      
+NOTE: View EMWS1.STAT_TEST.VIEW used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.04 seconds
+      

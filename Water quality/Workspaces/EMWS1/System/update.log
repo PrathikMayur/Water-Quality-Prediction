@@ -1,0 +1,225 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+1 
+Traverser: Traverser invoked.  MPCONNECT command is sas. 
+Traverser: Beginning flow traversal 
+*------------------------------------------------------------* 
+* 
+* FIMPORT : Beginning Update 
+* datetime : 03DEC2022:02:47:46 
+* 
+*------------------------------------------------------------* 
+17151      *------------------------------------------------------------*;
+17152      * FIMPORT: Update Variables Set;
+17153      *------------------------------------------------------------*;
+
+17154      proc sort data=EMWS1.FIMPORT_EMCMETADEFAULT out=_SortedVar;
+17155      by name;
+17156      run;
+
+NOTE: There were 10 observations read from the data set EMWS1.FIMPORT_EMCMETADEFAULT.
+NOTE: The data set WORK._SORTEDVAR has 10 observations and 21 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.01 seconds
+      
+
+17157      proc sort data=EMWS1.FIMPORT_VariableSet;
+17158      by name;
+17159      run;
+
+NOTE: There were 10 observations read from the data set EMWS1.FIMPORT_VARIABLESET.
+NOTE: The data set EMWS1.FIMPORT_VARIABLESET has 10 observations and 21 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+17160      data EMWS1.FIMPORT_VariableSet;
+17161      merge _SortedVar(in=_a) EMWS1.FIMPORT_VariableSet(in=_b rename=(ROLE = OLDROLE) keep=NAME ROLE ROLE LEVEL REPORT DROP ORDER);
+17162      by name;
+17163      drop OLDROLE;
+17164      if _b and ^_a then delete;
+17165      run;
+
+NOTE: There were 10 observations read from the data set WORK._SORTEDVAR.
+NOTE: There were 10 observations read from the data set EMWS1.FIMPORT_VARIABLESET.
+NOTE: The data set EMWS1.FIMPORT_VARIABLESET has 10 observations and 21 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+17166      * FIMPORT: End of Update Variables Set;
+17167      *------------------------------------------------------------*;
+
+17168      *------------------------------------------------------------*;
+17169      * FIMPORT: Computing metadata for TRAIN data;
+17170      *------------------------------------------------------------*;
+
+17180      %let emexceptionString =;
+17181      %let EMEXCEPTIONSTRING=;
+17182      *------------------------------------------------------------*;
+17183      * UPDATE: FIMPORT;
+17184      *------------------------------------------------------------*;
+17185      %let EM_ACTION = UPDATE;
+17186      %let syscc = 0;
+17187      /* Fimport.source */
+17188      %macro main;
+17189            %if %upcase(&EM_ACTION) = CREATE %then %do;
+17190               filename temp catalog 'sashelp.emsamp.Fimport_create.source';
+17191               %include temp;
+17192               filename temp;
+17193               %create;
+17194            %end;
+17195            %else
+17196            %if %upcase(&EM_ACTION) = TRAIN %then %do;
+17197               filename temp catalog 'sashelp.emsamp.Fimport_train.source';
+17198               %include temp;
+17199               filename temp;
+17200               %train;
+17201            %end;
+17202            %else
+17203            %if %upcase(&EM_ACTION) = UPDATE %then %do;
+17204               filename temp catalog 'sashelp.emsamp.Fimport_update.source';
+17205               %include temp;
+17206               filename temp;
+17207               %update;
+17208            %end;
+17209            %else
+17210            %if %upcase(&EM_ACTION) = PROPERTY %then %do;
+17211               filename temp catalog 'sashelp.emsamp.Fimport_actions.source';
+17212               %include temp;
+17213               filename temp;
+17214               %property;
+17215            %end;
+17216             %else
+17217            %if %upcase(&EM_ACTION) = SCORE %then %do;
+17218               filename temp catalog 'sashelp.emsamp.Fimport_score.source';
+17219               %include temp;
+17220               filename temp;
+17221               %score;
+17222            %end;
+17223            %else
+17224            %if %upcase(&EM_ACTION) = REPORT %then %do;
+17225               filename temp catalog 'sashelp.emsamp.Fimport_report.source';
+17226               %include temp;
+17227               filename temp;
+17228               %report;
+17229            %end;
+17230            %else
+17231            %if %upcase(&EM_ACTION) = OPENVARIABLESET %then %do;
+17232               filename temp catalog 'sashelp.emsamp.Fimport_actions.source';
+17233               %include temp;
+17234               filename temp;
+17235               %openvariableset;
+17236            %end;
+17237            %else
+17238            %if %upcase(&EM_ACTION) = CLOSEVARIABLESET %then %do;
+17239               filename temp catalog 'sashelp.emsamp.Fimport_actions.source';
+17240               %include temp;
+17241               filename temp;
+17242               %closevariableset;
+17243            %end;
+17244      %mend main;
+17245      %main;
+NOTE: %INCLUDE (level 1) file TEMP is file SASHELP.EMSAMP.FIMPORT_UPDATE.SOURCE.
+17246     +%macro update;
+17247     +    %let oldrole = %str();
+17248     +    data _null_;
+17249     +       set &em_data_exportset;
+17250     +       where NODEPORT='TRAIN';
+17251     +       call symput('oldrole', ROLE);
+17252     +    run;
+17253     +    %if &oldrole ne &em_property_role %then %do;
+17254     +        data &em_data_exportset;
+17255     +           set &em_data_exportset;
+17256     +           if NODEPORT='TRAIN' then do;
+17257     +              ROLE="&em_property_role";
+17258     +              NEEDUPDATE='Y';
+17259     +              EXPORT='Y';
+17260     +           end;
+17261     +        run;
+17262     +        filename x "&EM_NODEDIR.&EM_DSEP._updatePath.st";
+17263     +        data _null_;
+17264     +           file x;
+17265     +           put ' ';
+17266     +        run;
+17267     +        filename x;
+17268     +    %end;
+17269     +    %else %do;
+17270     +        data &em_data_exportset;
+17271     +           set &em_data_exportset;
+17272     +           if NODEPORT='TRAIN' then do;
+17273     +              ROLE="&em_property_role";
+17274     +              NEEDUPDATE='Y';
+17275     +              EXPORT='Y';
+17276     +           end;
+17277     +        run;
+17278     +    %end;
+17279     +
+17280     +    %em_getname(key=EMCMETADEFAULT, type=DATA);
+17281     +    %if %sysfunc(exist(&em_user_emcmetadefault)) and ^%sysfunc(exist(&em_lib..&em_nodeid._CMETA_TRAIN)) %then %do;
+17282     +        data &em_lib..&em_nodeid._CMETA_TRAIN;
+17283     +           set &em_user_emcmetadefault;
+17284     +           drop DROP;
+17285     +           where DROP='N';
+17286     +        run;
+17287     +    %end;
+17288     +
+17289     +%mend update;
+17290     +
+17291     +
+17292     +
+17293     +
+NOTE: %INCLUDE (level 1) ending.
+NOTE: Fileref TEMP has been deassigned.
+
+NOTE: There were 1 observations read from the data set EMWS1.FIMPORT_EXPORTSET.
+      WHERE NODEPORT='TRAIN';
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 6 observations read from the data set EMWS1.FIMPORT_EXPORTSET.
+NOTE: The data set EMWS1.FIMPORT_EXPORTSET has 6 observations and 18 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+17294      *------------------------------------------------------------*;
+17295      * End UPDATE: FIMPORT;
+17296      *------------------------------------------------------------*;
+
+17297      %em_delMacro;
+
+ERROR:  Windows error code: 1224 in hc_disk_truncate for C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\fimport.sas7bcat, The requested operation cannot be performed on a file with a user-mapped section open.
+ERROR:  Windows error code: 1224 in hc_disk_truncate for C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\fimport.sas7bcat, The requested operation cannot be performed on a file with a user-mapped section open.
+ERROR:  Windows error code: 1224 in hc_disk_truncate for C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\fimport.sas7bcat, The requested operation cannot be performed on a file with a user-mapped section open.
+17299      %let _HPDMGRIDHOST=;
+17300      %let _HPDMGRIDINSTALLLOC=;
+17301      %let _HPDMGRIDDATASERVER=;
+17302      %hpdm_gridSetOPtions;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+*------------------------------------------------------------* 
+* 
+* FIMPORT : End Update 
+* datetime : 03DEC2022:02:47:46 
+* 
+*------------------------------------------------------------* 
+Traverser: Run Completed 
+17303      proc printto;
+17304      run;
+

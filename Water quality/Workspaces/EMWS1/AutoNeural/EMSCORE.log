@@ -1,0 +1,111 @@
+*------------------------------------------------------------*
+* Score Log
+Date:                December 03, 2022
+Time:                02:52:57
+*------------------------------------------------------------*
+NOTE: This SAS session is using a registry in WORK.  All changes will be lost at the end of this session.
+16075  data work.outkey;
+16076  set EMWS1.AutoNeural_OUTKEY;
+16077  if upcase(ROLE) in('HIDDEN', 'STANDARD');
+16078  run;
+
+NOTE: There were 35 observations read from the data set EMWS1.AUTONEURAL_OUTKEY.
+NOTE: The data set WORK.OUTKEY has 23 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+16079  filename emflow "C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\AutoNeural\EMFLOWSCORE.sas";
+16080  *------------------------------------------------------------*;
+16081  * AutoNeural: Scoring DATA data;
+16082  *------------------------------------------------------------*;
+16083  data EMWS1.AutoNeural_TRAIN
+16084  / view=EMWS1.AutoNeural_TRAIN
+16085  ;
+16086  set EMWS1.Stat_TRAIN
+16087  ;
+16088  %inc emflow;
+16527  run;
+
+NOTE: DATA STEP view saved on file EMWS1.AUTONEURAL_TRAIN.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: View EMWS1.STAT_TRAIN.VIEW used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.04 seconds
+      
+NOTE: DATA statement used (Total process time):
+      real time           0.06 seconds
+      cpu time            0.06 seconds
+      
+
+16528  quit;
+16529  filename emflow;
+NOTE: Fileref EMFLOW has been deassigned.
+
+16530  filename emflow "C:\Users\sbattina\Desktop\Water quality\Workspaces\EMWS1\AutoNeural\EMFLOWSCORE.sas";
+16531  *------------------------------------------------------------*;
+16532  * AutoNeural: Scoring TEST data;
+16533  *------------------------------------------------------------*;
+16534  data EMWS1.AutoNeural_TEST
+16535  / view=EMWS1.AutoNeural_TEST
+16536  ;
+16537  set EMWS1.Stat_TEST
+16538  ;
+16539  %inc emflow;
+16978  run;
+
+NOTE: DATA STEP view saved on file EMWS1.AUTONEURAL_TEST.
+NOTE: A stored DATA STEP view cannot run under a different operating system.
+NOTE: View EMWS1.STAT_TEST.VIEW used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.06 seconds
+      
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.06 seconds
+      
+
+16979  quit;
+16980  filename emflow;
+NOTE: Fileref EMFLOW has been deassigned.
+
+16981  *------------------------------------------------------------*;
+16982  * AutoNeural: Computing metadata for TRAIN data;
+16983  *------------------------------------------------------------*;
+
+NOTE: View EMWS1.AUTONEURAL_TRAIN.VIEW used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.09 seconds
+      
+17328  data EMWS1.AutoNeural_EMINFO;
+17329  length TARGET KEY $32 DATA $43;
+17330  input TARGET KEY DATA $;
+17331  cards;
+
+NOTE: The data set EMWS1.AUTONEURAL_EMINFO has 3 observations and 3 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.03 seconds
+      
+
+17335  run;
+17336  proc sort data = EMWS1.AutoNeural_EMINFO NOTHREADS;
+17337  by TARGET KEY;
+17338  run;
+
+NOTE: There were 3 observations read from the data set EMWS1.AUTONEURAL_EMINFO.
+NOTE: The data set EMWS1.AUTONEURAL_EMINFO has 3 observations and 3 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: View EMWS1.AUTONEURAL_TRAIN.VIEW used (Total process time):
+      real time           0.08 seconds
+      cpu time            0.07 seconds
+      
+NOTE: View EMWS1.AUTONEURAL_TEST.VIEW used (Total process time):
+      real time           0.07 seconds
+      cpu time            0.07 seconds
+      

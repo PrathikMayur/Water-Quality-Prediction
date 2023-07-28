@@ -1,0 +1,240 @@
+*------------------------------------------------------------*
+User:                sbattina
+Date:                December 03, 2022
+Time:                03:30:03
+*------------------------------------------------------------*
+* Training Output
+*------------------------------------------------------------*
+ 
+ 
+ 
+ 
+Variable Summary
+ 
+          Measurement    Frequency
+ Role        Level         Count
+ 
+TARGET      BINARY           1
+ 
+ 
+ 
+ 
+ 
+                                                                                         BINNED_KS_
+                                                                _KS_PROB_                   PROB_
+Obs      TARGET      TARGETLABEL    _AUR_    _GINI_      KS       CUTOFF     _KS_BIN_      CUTOFF
+ 
+ 1     Potability                   0.623     0.246    0.196      0.346        0.196        0.482
+ 
+ 
+ 
+ 
+ 
+                                                                   _TKS_              _TBINNED_
+                                                                   PROB_     _TKS_     KS_PROB_
+Obs      TARGET      TARGETLABEL    _TAUR_    _TGINI_     TKS     CUTOFF_     BIN_     CUTOFF_
+ 
+ 1     Potability                    0.574     0.147     0.115     0.346     0.114      0.455
+ 
+ 
+ 
+ 
+ 
+                                                                                         BINNED_KS_
+                                                                _KS_PROB_                   PROB_
+Obs      TARGET      TARGETLABEL    _AUR_    _GINI_      KS       CUTOFF     _KS_BIN_      CUTOFF
+ 
+ 1     Potability                    0.71     0.421    0.305      0.372        0.307        0.379
+ 
+ 
+ 
+ 
+ 
+                                                                   _TKS_              _TBINNED_
+                                                                   PROB_     _TKS_     KS_PROB_
+Obs      TARGET      TARGETLABEL    _TAUR_    _TGINI_     TKS     CUTOFF_     BIN_     CUTOFF_
+ 
+ 1     Potability                    0.623     0.246     0.179     0.386      0.17       0.4
+ 
+ 
+ 
+ 
+ 
+                                                                                         BINNED_KS_
+                                                                _KS_PROB_                   PROB_
+Obs      TARGET      TARGETLABEL    _AUR_    _GINI_      KS       CUTOFF     _KS_BIN_      CUTOFF
+ 
+ 1     Potability                   0.532     0.065    0.069      0.411        0.068        0.413
+ 
+ 
+ 
+ 
+ 
+                                                                   _TKS_              _TBINNED_
+                                                                   PROB_     _TKS_     KS_PROB_
+Obs      TARGET      TARGETLABEL    _TAUR_    _TGINI_     TKS     CUTOFF_     BIN_     CUTOFF_
+ 
+ 1     Potability                    0.511     0.023     0.051     0.421     0.041      0.382
+ 
+ 
+ 
+ 
+ 
+                                                                                         BINNED_KS_
+                                                                _KS_PROB_                   PROB_
+Obs      TARGET      TARGETLABEL    _AUR_    _GINI_      KS       CUTOFF     _KS_BIN_      CUTOFF
+ 
+ 1     Potability                   0.784     0.569    0.418      0.435        0.415        0.468
+ 
+ 
+ 
+ 
+ 
+                                                                   _TKS_              _TBINNED_
+                                                                   PROB_     _TKS_     KS_PROB_
+Obs      TARGET      TARGETLABEL    _TAUR_    _TGINI_     TKS     CUTOFF_     BIN_     CUTOFF_
+ 
+ 1     Potability                    0.668     0.336     0.305     0.342     0.295      0.367
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Fit Statistics
+Model Selection based on Train: Misclassification Rate (_MISC_)
+ 
+                                                                       Train:
+                                                       Train:         Average    Train:
+Selected                                         Misclassification    Squared      Roc     Train: Gini
+ Model      Model Node    Model Description             Rate           Error      Index    Coefficient
+ 
+   Y        AutoNeural    AutoNeural                  0.25888         0.17784     0.784       0.569
+            Boost         Gradient Boosting           0.32455         0.21182     0.710       0.421
+            Tree          Decision Tree               0.33715         0.21768     0.623       0.246
+            Reg           Logistic Regression         0.38984         0.23683     0.532       0.065
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Fit Statistics Table
+Target: Potability
+ 
+Data Role=Train
+ 
+                                                                     Auto
+Statistics                                                         Neural      Boost       Tree        Reg
+ 
+Train: Bin-Based Two-Way Kolmogorov-Smirnov Probability Cutoff       0.47       0.38       0.48       0.41
+Train: Kolmogorov-Smirnov Statistic                                  0.42       0.31       0.20       0.07
+Train: Akaike's Information Criterion                             3091.76        .          .      3511.76
+Train: Average Squared Error                                         0.18       0.21       0.22       0.24
+Train: Roc Index                                                     0.78       0.71       0.62       0.53
+Train: Average Error Function                                        0.53        .          .         0.67
+Train: Cumulative Percent Captured Response                         23.31      20.76      18.27      13.12
+Train: Percent Captured Response                                    10.97       9.01       7.24       5.78
+Selection Criterion: Train: Misclassification Rate                   0.26       0.32       0.34       0.39
+Train: Degrees of Freedom for Error                               2464.00        .          .      2609.00
+Train: Model Degrees of Freedom                                    155.00        .          .        10.00
+Train: Total Degrees of Freedom                                   2619.00    2619.00    2619.00    2619.00
+Train: Divisor for ASE                                            5238.00    5238.00    5238.00    5238.00
+Train: Error Function                                             2781.76        .          .      3491.76
+Train: Final Prediction Error                                        0.20        .          .         0.24
+Train: Gain                                                        133.02     107.56      82.59      31.19
+Train: Gini Coefficient                                              0.57       0.42       0.25       0.07
+Train: Bin-Based Two-Way Kolmogorov-Smirnov Statistic                0.42       0.31       0.20       0.07
+Train: Kolmogorov-Smirnov Probability Cutoff                         0.44       0.37       0.35       0.41
+Train: Cumulative Lift                                               2.33       2.08       1.83       1.31
+Train: Lift                                                          2.19       1.80       1.45       1.16
+Train: Maximum Absolute Error                                        0.99       0.77       0.89       0.70
+Train: Misclassification Rate                                        0.26       0.32       0.34       0.39
+Train: Mean Square Error                                             0.19        .          .         0.24
+Train: Sum of Frequencies                                         2619.00    2619.00    2619.00    2619.00
+Train: Number of Estimate Weights                                  155.00        .          .        10.00
+Train: Root Average Squared Error                                    0.42       0.46       0.47       0.49
+Train: Cumulative Percent Response                                  90.84      80.92      71.18      51.15
+Train: Percent Response                                             85.50      70.23      56.43      45.04
+Train: Root Final Prediction Error                                   0.45        .          .         0.49
+Train: Root Mean Squared Error                                       0.43        .          .         0.49
+Train: Schwarz's Bayesian Criterion                               4001.70        .          .      3570.46
+Train: Sum of Squared Errors                                       931.51    1109.52    1140.23    1240.53
+Train: Sum of Case Weights Times Freq                             5238.00    5238.00        .      5238.00
+Train: Number of Wrong Classifications                             678.00        .          .          .
+ 
+ 
+Data Role=Test
+ 
+                                                                     Auto
+Statistics                                                         Neural      Boost       Tree        Reg
+ 
+Test:  Kolmogorov-Smirnov Statistic                                  0.31       0.18       0.12       0.05
+Test: Average Squared Error                                          0.23       0.23       0.23       0.24
+Test:  Roc Index                                                     0.67       0.62       0.57       0.51
+Test: Average Error Function                                         0.66        .          .         0.67
+Test:  Bin-Based Two-Way Kolmogorov-Smirnov Probability Cutoff       0.37       0.40       0.46       0.38
+Test: Cumulative Percent Captured Response                          16.34      15.95      14.68      11.67
+Test: Percent Captured Response                                      7.00       7.00       6.50       5.45
+Test: Divisor for TASE                                            1314.00    1314.00    1314.00    1314.00
+Test: Error Function                                               865.97        .          .       880.58
+Test: Gain                                                          62.68      58.81      46.11      16.20
+Test:  Gini Coefficient                                              0.34       0.25       0.15       0.02
+Test:  Bin-Based Two-Way Kolmogorov-Smirnov Statistic                0.30       0.17       0.11       0.04
+Test:  Kolmogorov-Smirnov Probability Cutoff                         0.34       0.39       0.35       0.42
+Test: Cumulative Lift                                                1.63       1.59       1.46       1.16
+Test: Lift                                                           1.39       1.39       1.29       1.08
+Test: Maximum Absolute Error                                         0.96       0.78       0.89       0.71
+Test: Misclassification Rate                                         0.36       0.37       0.38       0.39
+Test: Lower 95% Conf. Limit for TMISC                                 .          .          .         0.36
+Test: Upper 95% Conf. Limit for TMISC                                 .          .          .         0.43
+Test: Mean Square Error                                              0.23        .          .         0.24
+Test: Sum of Frequencies                                           657.00     657.00     657.00     657.00
+Test: Root Average Squared Error                                     0.48       0.48       0.48       0.49
+Test: Cumulative Percent Response                                   63.64      62.12      57.16      45.45
+Test: Percent Response                                              54.55      54.55      50.60      42.42
+Test: Root Mean Square Error                                         0.48        .          .         0.49
+Test: Sum of Squared Errors                                        299.19     298.54     307.33     313.44
+Test: Sum of Weights Times Freqs                                  1314.00    1314.00    1314.00    1314.00
+Test: Number of Wrong Classifications                              234.00        .          .          .
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Event Classification Table
+Model Selection based on Train: Misclassification Rate (_MISC_)
+ 
+                                     Data                   Target      False       True        False       True
+Model Node    Model Description      Role       Target      Label     Negative    Negative    Positive    Positive
+ 
+Tree          Decision Tree          TRAIN    Potability                 716        1431         167         305
+Boost         Gradient Boosting      TRAIN    Potability                 786        1534          64         235
+Reg           Logistic Regression    TRAIN    Potability                1020        1597           1           1
+AutoNeural    AutoNeural             TRAIN    Potability                 472        1392         206         549
+
+
+*------------------------------------------------------------*
+* Score Output
+*------------------------------------------------------------*
+
+
+*------------------------------------------------------------*
+* Report Output
+*------------------------------------------------------------*

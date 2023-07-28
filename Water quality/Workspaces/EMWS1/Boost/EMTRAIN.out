@@ -1,0 +1,38 @@
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Variable Summary
+
+          Measurement    Frequency
+Role         Level         Count
+
+ID         INTERVAL          1    
+INPUT      INTERVAL          9    
+TARGET     BINARY            1    
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Model Events
+
+                                      Number
+                       Measurement      of
+  Target      Event       Level       Levels      Order       Label
+
+Potability      1        BINARY          2      Descending         
+ 
+                                                                                                                                                                                                                                                                
+ 
+ 
+Predicted and decision variables
+
+Type           Variable                Label
+
+TARGET       Potability                              
+PREDICTED    P_Potability1    Predicted: Potability=1
+RESIDUAL     R_Potability1    Residual: Potability=1 
+PREDICTED    P_Potability0    Predicted: Potability=0
+RESIDUAL     R_Potability0    Residual: Potability=0 
+FROM         F_Potability     From: Potability       
+INTO         I_Potability     Into: Potability       
